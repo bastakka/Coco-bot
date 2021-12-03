@@ -39,9 +39,9 @@ class Config:
     def __init__(self) -> None:
         """Initialize the Config class"""
         try:
-            with open("config.json", "r", encoding="utf-8") as config_file:
+            with open("config/config.json", "r", encoding="utf-8") as config_file:
                 self.config = json.load(config_file)
-            with open("default.json", "r", encoding="utf-8") as default_file:
+            with open("config/default.json", "r", encoding="utf-8") as default_file:
                 self.default = json.load(default_file)
         except FileNotFoundError:
             print("Configuration file not found.")
