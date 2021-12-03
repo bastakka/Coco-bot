@@ -6,6 +6,7 @@ chardet==4.0.0
 colorama==0.4.4
 idna==3.3
 multidict==5.2.0
+pretty-errors==1.2.25
 py-cord==2.0.0a4496+gb872cfea
 pycparser==2.21
 PyNaCl==1.4.0
