@@ -4,6 +4,7 @@ attrs==21.2.0
 cffi==1.15.0
 chardet==4.0.0
 colorama==0.4.4
+colorlog==6.6.0
 idna==3.3
 multidict==5.2.0
 pretty-errors==1.2.25
