@@ -5,7 +5,9 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 from colorlog import ColoredFormatter
-from config.config import config
+from config.config import get_config
+
+config = get_config()
 
 
 def get_logger(name):
