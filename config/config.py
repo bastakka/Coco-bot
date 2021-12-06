@@ -1,12 +1,12 @@
 """Configarution load module
 
 This module loads the configuration from configuration file.
-Returns object of Config class.
+Provides acess to Config class and config singleton
 """
 import json
 import sys
 
-from colorama import init, Fore
+from colorama import Fore, init
 
 init(autoreset=True)
 
@@ -44,16 +44,12 @@ class Config:
             with open("config/default.json", "r", encoding="utf-8") as default_file:
                 self.default = json.load(default_file)
         except FileNotFoundError:
-            print("Configuration file not found.")
+            print(f"{Fore.RED}[!] Configuration file not found.")
             sys.exit(1)
 
         self.prefixes = self._get("bot", "prefixes")
         self.extensions_enabled = self._get("extensions", "enabled")
-        print(f"{Fore.YELLOW}Enabled extensions: " + ", ".join(self.extensions_enabled))
         self.extensions_disabled = self._get("extensions", "disabled")
-        print(
-            f"{Fore.YELLOW}Disabled extensions: " + ", ".join(self.extensions_disabled)
-        )
 
     @property
     def bot_token(self) -> str:
@@ -71,13 +67,18 @@ class Config:
         return self._get("bot", "log_channel_id")
 
     @property
+    def default_prefix(self) -> str:
+        """Get the bot default prefix"""
+        return self._get("bot", "default_prefix")
+
+    @property
     def color(self) -> str:
-        """Get the color"""
+        """Get the bot color"""
         return self._get("bot", "color")
 
     @property
     def logo_url(self) -> str:
-        """Get the logo url"""
+        """Get the bot logo url"""
         return self._get("bot", "logo_url")
 
     @property
@@ -112,10 +113,6 @@ class Config:
             self.extensions_disabled.remove(extension)
             self.extensions_enabled.append(extension)
             self.save()
-        elif extension in self.extensions_enabled:
-            print("Extension is already enabled.")
-        else:
-            print("Extension {extension} not found")
 
     def disable_extension(self, extension: str) -> None:
         """Disable extension"""
@@ -123,10 +120,11 @@ class Config:
             self.extensions_enabled.remove(extension)
             self.extensions_disabled.append(extension)
             self.save()
-        elif extension in self.extensions_disabled:
-            print("Extension is already disabled.")
-        else:
-            print("Extension {extension} not found")
 
 
 config = Config()
+
+
+def get_config() -> Config:
+    """Returns config"""
+    return config
