@@ -133,5 +133,5 @@ dmypy.json
 config/config.json
 
 # User picture files
-assets/memes/
+assets/images/memes/*
 
