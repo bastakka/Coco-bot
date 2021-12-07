@@ -132,11 +132,6 @@ dmypy.json
 # Config
 config/config.json
 
-# Picture files
-*.png
-*.jpg
-*.jpeg
-*.gif
-*.bmp
-*.tiff
+# User picture files
+assets/memes/
 
