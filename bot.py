@@ -1,5 +1,6 @@
 """Pycord bot module"""
 import time
+
 import discord
 import pretty_errors
 from colorama import Fore, init

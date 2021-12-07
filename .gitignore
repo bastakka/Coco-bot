@@ -129,9 +129,13 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+<<<<<<< HEAD
 # Config
 config/config.json
 
 # User picture files
 assets/memes/
 
+=======
+config/config.json
+>>>>>>> parent of 42035a4 (Add assets)
