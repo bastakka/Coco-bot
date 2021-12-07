@@ -44,7 +44,8 @@ class Chat(commands.Cog):
 
         if message.guild is None:
             log_channel = self.bot.get_channel(int(config.bot_log_channel_id))
-            log_message = f"{message.author.name}#{message.author.discriminator} issued `openai` in Direct message."
+            log_user = f"{message.author.name}#{message.author.discriminator}"
+            log_message = log_user + " issued `openai` in Direct message."
             await log_channel.send(log_message)
             logger.info(log_message)
             start = time.time()
