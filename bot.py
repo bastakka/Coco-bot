@@ -1,5 +1,6 @@
 """Pycord bot module"""
 import time
+from datetime import datetime
 
 import discord
 import pretty_errors
@@ -37,7 +38,7 @@ async def get_prefix(bot, message):
         prefix = config.prefixes.get(str(message.guild.id))
     return commands.when_mentioned_or(prefix)(bot, message)
 
-
+logger.info("Coco started at %s", datetime.now())
 coco = commands.Bot(intents=intents, command_prefix=get_prefix, case_insensitive=True)
 
 
@@ -132,7 +133,7 @@ async def after_invoke(ctx: commands.Context) -> None:
     log_channel = coco.get_channel(int(config.bot_log_channel_id))
     message = f"Command {ctx.command} successfully completed after"
     delta = end - ctx.start
-    logger.info("%s %f seconds.", message, delta)
+    logger.info("%s %.2f seconds.", message, delta)
     await log_channel.send(f"{message} {delta} seconds.")
 
 
@@ -150,8 +151,15 @@ async def reload_config(ctx: commands.Context) -> None:
     await ctx.send("🔁 Config reloaded.", delete_after=10)
     await ctx.message.delete(delay=10)
 
-print(f"{Fore.YELLOW}[*] Loading extensions...")
+print(f"{Fore.YELLOW}[*] Extensions loading...")
 print(f"{Fore.YELLOW}[✓] Enabled extensions: " + ", ".join(config.extensions_enabled))
+for extension in config.extensions_enabled:
+    try:
+        coco.load_extension(f"extensions.{extension}")
+        logger.info("Loaded extension %s", extension)
+    except Exception as error:
+        error_message = f"{extension.capitalize()} failed to load.\n{error}"
+        logger.error(error_message)
 print(f"{Fore.YELLOW}[✗] Disabled extensions: " + ", ".join(config.extensions_disabled))
 
 coco.run(config.bot_token)

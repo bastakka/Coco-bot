@@ -44,7 +44,7 @@ class Config:
             with open("config/default.json", "r", encoding="utf-8") as default_file:
                 self.default = json.load(default_file)
         except FileNotFoundError:
-            print(f"{Fore.RED}[!] Configuration file not found.")
+            print(f"{Fore.RED}[✗] Configuration file not found. Exiting...")
             sys.exit(1)
 
         self.prefixes = self._get("bot", "prefixes")
