@@ -1,5 +1,4 @@
 """Pycord bot module"""
-import time
 from datetime import datetime
 
 import discord
@@ -108,35 +107,6 @@ if config.debug is False:
             kwargs,
         )
 
-
-@coco.before_invoke
-async def before_invoke(ctx: commands.Context) -> None:
-    """Code that runs before invoked command.
-
-    Used for logging
-    """
-    log_channel = coco.get_channel(int(config.bot_log_channel_id))
-    message = f"{ctx.author.name}#{ctx.author.discriminator} issued the command `{ctx.command}`"
-    chat = ctx.guild.name if ctx.guild else "Direct message"
-    logger.info("%s in %s.", message, chat)
-    await log_channel.send(f"{message} in {chat}.")
-    ctx.start = time.time()
-
-
-@coco.after_invoke
-async def after_invoke(ctx: commands.Context) -> None:
-    """Code that runs after invoked command.
-
-    Used for logging how long command took to complete.
-    """
-    end = time.time()
-    log_channel = coco.get_channel(int(config.bot_log_channel_id))
-    message = f"Command {ctx.command} successfully completed after"
-    delta = end - ctx.start
-    logger.info("%s %.2f seconds.", message, delta)
-    await log_channel.send(f"{message} {delta} seconds.")
-
-
 # @commands.check(lambda ctx: ctx.guild is None)
 @coco.command()
 async def reload_config(ctx: commands.Context) -> None:
@@ -156,7 +126,7 @@ print(f"{Fore.YELLOW}[✓] Enabled extensions: " + ", ".join(config.extensions_e
 for extension in config.extensions_enabled:
     try:
         coco.load_extension(f"extensions.{extension}")
-        logger.info("Loaded extension %s", extension)
+        logger.info("Loaded extension %s succesfully", extension)
     except Exception as error:
         error_message = f"{extension.capitalize()} failed to load.\n{error}"
         logger.error(error_message)

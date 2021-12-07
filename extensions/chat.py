@@ -4,12 +4,12 @@ from collections import deque
 
 import openai
 from config.config import get_config
-from discord.commands.context import ApplicationContext
 from discord.ext import commands
 from logs.logger import get_logger
 
 config = get_config()
 logger = get_logger(__name__)
+
 
 def get_chatlog_from_userid(chat, user_id: int) -> str:
     """Get chatlog from user id."""
@@ -17,6 +17,7 @@ def get_chatlog_from_userid(chat, user_id: int) -> str:
         return "".join(message for message in chat.chats[user_id])
     chat.chats[user_id] = deque(maxlen=20)
     return ""
+
 
 class Chat(commands.Cog):
     """Bot openai related commands cog"""
@@ -30,6 +31,30 @@ class Chat(commands.Cog):
         self.chats = {}
         openai.api_key = config.openai["key"]
 
+    async def cog_before_invoke(self, ctx: commands.Context) -> None:
+        """Code that runs before invoked command.
+
+        Used for logging chat commands.
+        """
+        log_channel = self.bot.get_channel(int(config.bot_log_channel_id))
+        message = f"{ctx.author.name}#{ctx.author.discriminator} issued the command `{ctx.command}`"
+        chat = ctx.guild.name if ctx.guild else "Direct message"
+        logger.info("%s in %s.", message, chat)
+        await log_channel.send(f"{message} in {chat}.")
+        ctx.start = time.time()
+
+    async def cog_after_invoke(self, ctx: commands.Context) -> None:
+        """Code that runs after invoked command.
+
+        Used for logging how long command took to complete.
+        """
+        end = time.time()
+        log_channel = self.bot.get_channel(int(config.bot_log_channel_id))
+        message = f"Command {ctx.command} successfully completed after"
+        delta = end - ctx.start
+        logger.info("%s %.2f seconds.", message, delta)
+        await log_channel.send(f"{message} {delta} seconds.")
+
     @commands.Cog.listener()
     async def on_message(self, message) -> None:
         """Chat in Direct message by default.
@@ -39,8 +64,8 @@ class Chat(commands.Cog):
         if message.author.bot:
             return
 
-        if message.content.startswith("coco "): # Ignore commands in Direct message
-            return                          # Which is always "coco " from bot.py
+        if message.content.lower().startswith("coco "):  # Ignore commands in Direct message
+            return  # Which is always "coco " from bot.py
 
         if message.guild is None:
             log_channel = self.bot.get_channel(int(config.bot_log_channel_id))
@@ -63,7 +88,7 @@ class Chat(commands.Cog):
                 best_of=1,
                 max_tokens=150,
             )
-            answer = response.choices[0].text.strip()
+            answer = response.choices[0].text.strip().replace("AI: ", "")
             self.chats[message.author.id].append(f"\nHuman: {content}\nAI: {answer}")
             await message.author.send(answer)
 
@@ -71,7 +96,7 @@ class Chat(commands.Cog):
             log_message = "Openai response took: "
             delta = end - start
             logger.info("%s %.2f seconds.", log_message, delta)
-            await log_channel.send(f"{message} {delta} seconds.")
+            await log_channel.send(f"{log_message} {delta} seconds.")
 
     @commands.command()
     async def chat(self, ctx: commands.Context, *, message: str):
@@ -96,7 +121,7 @@ class Chat(commands.Cog):
             best_of=1,
             max_tokens=150,
         )
-        answer = response.choices[0].text.strip()
+        answer = response.choices[0].text.strip().replace("AI: ", "")
         self.chats[ctx.author.id].append(f"\nHuman: {message}\nAI: {answer}")
         await ctx.send(answer)
 
