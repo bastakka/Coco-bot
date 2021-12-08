@@ -12,7 +12,7 @@
 
   "extensions": {
     "enabled": [],
-    "disabled": ["reddit", "chat", "music", "party", "weeb", "urbandictionary"]
+    "disabled": ["reddit", "openaichat", "music", "party", "weeb", "urbandictionary"]
   },
   "reddit": {
     "id": 0,

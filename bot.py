@@ -12,10 +12,11 @@ from logs.logger import get_logger
 init(autoreset=True)
 pretty_errors.activate()
 print(f"{Fore.YELLOW}[*] Coco loading...")
-config = get_config()
-print(f"{Fore.GREEN}[✓] Config loaded!")
 logger = get_logger(__name__)
-print(f"{Fore.GREEN}[✓] Logging enabled!")
+logger.info("Logger loaded")
+config = get_config()
+logger.info("Configuration loaded")
+
 
 intents = discord.Intents.default()
 intents.members = True  # pylint: disable=assigning-non-slot
@@ -48,22 +49,23 @@ async def on_ready() -> None:
     Primarly used to print status info.
     """
     print(f"{Fore.BLUE}[*] Pycord version: {discord.__version__}")
-    print(f"[✓] Logged in as: {coco.user.name} - {coco.user.id}\n")
-    print("[✓] Serving on:")
+    login_message = f"Logged in as {coco.user.name}#{coco.user.discriminator}"
+    logger.info(login_message)
+    print(f"{Fore.MAGENTA}[✓] Serving on:")
     for guild in coco.guilds:
-        print(f"[✓] {guild.name} - {guild.id}")
+        print(f"{Fore.MAGENTA}[✓] {guild.name} - {guild.id}")
     await coco.change_presence(
         activity=discord.Activity(
             type=discord.ActivityType.watching, name="あさココLIVEニュース"
         )
     )
-    print(50 * "=")
+    print(f"{Fore.MAGENTA}------------------")
 
 
 if config.debug is False:
 
     @coco.event
-    async def on_command_error(ctx, error) -> None:
+    async def on_command_error(ctx: commands.Context, error) -> None:
         """
         Error handler which informs an user in a funny way.
         """
@@ -94,7 +96,7 @@ if config.debug is False:
             await ctx.send("Who are you to command me like that.", delete_after=10)
             await ctx.message.delete(delay=10)
         else:
-            await ctx.send(f"An error occured.\n{error}")
+            await ctx.send(f"An error occured in command {ctx.command}.\n{error}")
             raise error
 
     @coco.event
@@ -114,7 +116,6 @@ async def reload_config(ctx: commands.Context) -> None:
     Usefull to not waste time restarting entire bot for some changes in config.
 
     Changes in "bot" category are still recommended to be followed up by restart.
-
     Outputs successfull reload to channel, where command was invoked.
     """
     config.reload()
@@ -126,9 +127,9 @@ print(f"{Fore.YELLOW}[✓] Enabled extensions: " + ", ".join(config.extensions_e
 for extension in config.extensions_enabled:
     try:
         coco.load_extension(f"extensions.{extension}")
-        logger.info("Loaded extension %s succesfully", extension)
-    except Exception as error:
-        error_message = f"{extension.capitalize()} failed to load.\n{error}"
+        logger.info("Extension %s loaded succesfully", extension)
+    except Exception as exception: # pylint: disable=broad-except
+        error_message = f"{extension.capitalize()} failed to load.\n{exception}"
         logger.error(error_message)
 print(f"{Fore.YELLOW}[✗] Disabled extensions: " + ", ".join(config.extensions_disabled))
 

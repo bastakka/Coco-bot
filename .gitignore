@@ -135,3 +135,5 @@ config/config.json
 # User picture files
 assets/images/memes/*
 
+# Temporary files which are not tracked by git
+*.tmp
