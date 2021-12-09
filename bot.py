@@ -6,16 +6,15 @@ import pretty_errors
 from colorama import Fore, init
 from discord.ext import commands
 
-from config.config import get_config
-from logs.logger import get_logger
+from core.config import get_config
+from core.logger import get_logger
 
 init(autoreset=True)
 pretty_errors.activate()
 print(f"{Fore.YELLOW}[*] Coco loading...")
-logger = get_logger(__name__)
-logger.info("Logger loaded")
 config = get_config()
-logger.info("Configuration loaded")
+logger = get_logger(__name__, config.debug)
+logger.info("Configuration & logger loaded")
 
 
 intents = discord.Intents.default()
@@ -49,8 +48,6 @@ async def on_ready() -> None:
     Primarly used to print status info.
     """
     print(f"{Fore.BLUE}[*] Pycord version: {discord.__version__}")
-    login_message = f"Logged in as {coco.user.name}#{coco.user.discriminator}"
-    logger.info(login_message)
     print(f"{Fore.MAGENTA}[✓] Serving on:")
     for guild in coco.guilds:
         print(f"{Fore.MAGENTA}[✓] {guild.name} - {guild.id}")
@@ -60,6 +57,8 @@ async def on_ready() -> None:
         )
     )
     print(f"{Fore.MAGENTA}------------------")
+    login_message = f"Logged in as {coco.user.name}#{coco.user.discriminator}"
+    logger.info(login_message)
 
 
 if config.debug is False:

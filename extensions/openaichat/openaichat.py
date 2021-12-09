@@ -1,72 +1,13 @@
-"""Openai bot commands cog module"""
+"""Module which contains all the commands for the OpenAI extension."""
 import os
-import random
 import time
-from collections import deque
 
 import discord
 import openai
 from discord.ext import commands
 from core.basecog import BaseCog
 
-
-class ChatLog:
-    """Chat log class."""
-
-    def __init__(self, author, botname: str):
-        """Initialize chat log."""
-        self.log = deque(maxlen=50)
-        self.author = author
-        self.botname = botname
-        self.add(f"A conversation between {author.name} and {botname} starts.\n")
-        self.add(self.get_random_emotion_log())
-
-    def __str__(self):
-        return "".join(message for message in self.log)
-
-    def get_random_emotion_log(self) -> str:
-        """Gets random emotion for chat"""
-        emotions = [
-            "aggresive",
-            "angry",
-            "annoyed",
-            "bored",
-            "calm",
-            "confused",
-            "curious",
-            "depressed",
-            "disappointed",
-            "disgusted",
-            "embarrassed",
-            "excited",
-            "frustrated",
-            "happy",
-            "hurt",
-            "inspired",
-            "jealous",
-            "lonely",
-            "nervous",
-            "proud",
-            "sad",
-            "scared",
-            "shocked",
-            "stressed",
-            "surprised",
-            "tired",
-            "upset",
-            "worried",
-        ]
-        emotion = random.choice(emotions)
-        emotion_log = f"{self.botname} seems really {emotion} today.\n"
-        return emotion_log
-
-    def add(self, msg):
-        """Add message to log."""
-        self.log.append(msg)
-
-    def clear(self):
-        """Clear log."""
-        self.__init__(self.author, self.botname)
+from .chatlog import ChatLog
 
 
 class OpenAI(BaseCog):
@@ -174,10 +115,10 @@ class OpenAI(BaseCog):
             with open("chatlog.tmp", "w", encoding="utf-8") as temp_file:
                 temp_file.write(chatlog)
                 await ctx.send(file=discord.File("chatlog.tmp"))
+                os.remove("chatlog.tmp")
             return
         chatlog = f"```{chatlog}```"
         await ctx.send(chatlog)
-        os.remove("chatlog.tmp")
 
     @commands.command()
     async def log_clear(self, ctx: commands.Context):
@@ -187,11 +128,3 @@ class OpenAI(BaseCog):
         """
         self.chats[ctx.author.id].clear()
         await ctx.send("Chat log cleared.")
-
-
-def setup(bot) -> None:
-    """Setup function used by discord.py extension loader.
-
-    Adds Chat cog to bot.
-    """
-    bot.add_cog(OpenAI(bot))

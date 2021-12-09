@@ -1,8 +1,8 @@
 """Module for base cog class."""
 import time
 from discord.ext import commands
-from logs.logger import get_logger
-from config.config import get_config
+from core.logger import get_logger
+from core.config import get_config
 
 
 class BaseCog(commands.Cog):
@@ -11,8 +11,8 @@ class BaseCog(commands.Cog):
     def __init__(self, bot):
         """Init base cog class."""
         self.bot = bot
-        self.logger = get_logger(self.__class__.__name__)
         self.config = get_config()
+        self.logger = get_logger(self.__class__.__name__, self.config.debug)
 
     async def cog_before_invoke(self, ctx: commands.Context) -> None:
         """Code that runs before invoked command.
