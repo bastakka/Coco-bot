@@ -1,4 +1,4 @@
-"""Module with Chatlog class for openai-chat."""
+"""Module with Chatlog class for OpenAI cog"""
 from collections import deque
 import random
 

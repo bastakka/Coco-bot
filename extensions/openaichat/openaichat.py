@@ -1,11 +1,11 @@
-"""OpenAI bot commands cog module."""
+"""OpenAI bot commands cog module"""
 import os
 import time
 
 import discord
 import openai
-from discord.ext import commands
 from core.basecog import BaseCog
+from discord.ext import commands
 
 from .chatlog import ChatLog
 
@@ -65,25 +65,23 @@ class OpenAI(BaseCog):
                         # Ignore commands in Direct message
                 return  # Which is always default prefix from bot.py
             text_channel = message.channel
-            async with text_channel.typing():
-                log_channel = self.bot.get_channel(int(self.config.bot_log_channel_id))
-                log_user = f"{message.author.name}#{message.author.discriminator}"
-                log_message = log_user + " issued `openai` in Direct message."
-                await log_channel.send(log_message)
-                self.logger.debug(log_message)
-                start = time.time()
 
+            log_user = f"{message.author.name}#{message.author.discriminator}"
+            log_message = log_user + " issued `openai` in Direct message."
+            self.logger.debug(log_message)
+            start = time.time()
+            
+            async with text_channel.typing():
                 content = message.content
                 author = message.author
                 answer = self._get_ai_response(author, content)
                 await message.author.send(answer)
 
-                end = time.time()
-                delta = end - start
-                log_message = "Openai response took: "
-                log_message += f" {format(delta, '.2f')} seconds."
-                self.logger.debug(log_message)
-            await log_channel.send(log_message)
+            end = time.time()
+            delta = end - start
+            log_message = "Openai response took: "
+            log_message += f" {format(delta, '.2f')} seconds."
+            self.logger.debug(log_message)
 
     @commands.command()
     async def chat(self, ctx: commands.Context, *, message: str):
