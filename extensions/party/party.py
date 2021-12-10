@@ -33,7 +33,7 @@ class Party(BaseCog):
         ]
         if activity in activities:
             together_control = await DiscordTogether(self.config.bot_token)
-            link = await self.together_control.create_link(
+            link = await together_control.create_link(
                 ctx.author.voice.channel.id, activity
             )
             await ctx.send(f"Click the blue link!\n{link}")
