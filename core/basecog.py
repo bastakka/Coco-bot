@@ -45,7 +45,7 @@ class BaseCog(commands.Cog):
         self.logger.debug(log_message)
 
     @commands.Cog.listener()
-    async def on_error(self, event, *args, **kwargs) -> None:
+    async def on_error(self, event, *args, **kwargs) -> None: # pylint: disable=unused-argument
         """Error handler for internal errors."""
         self.logger.error(
             "An error occured in %s with arguments %s in extension %s",

@@ -80,26 +80,6 @@ class Base(BaseCog):
             return
         if message.guild.id == self.config.bot_log_channel_id:
             self.logger.info(f"{message.author} deleted {message}")
-    """
-    @commands.command()
-    async def help(self, ctx: commands.Context) -> None:
-        
-        embed = make_embed("Help")
-        embed.add_field(
-            name="Commands",
-            value="\n".join(
-                [
-                    f"{self.bot.command_prefix}{command.name} - {command.description}"
-                    for command in self.bot.commands
-                ]
-            ),
-        )
-        embed.add_field(
-            name="Extensions",
-            value="\n".join([extension for extension in self.bot.extensions]),
-        )
-        await ctx.send(embed=embed)
-    """
 
     @commands.cooldown(rate=1, per=5, type=commands.BucketType.channel)
     @commands.command()
