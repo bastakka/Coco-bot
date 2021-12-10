@@ -51,7 +51,7 @@ def _get_urban_json(url: str) -> dict:
     try:
         with urlopen(url) as response:
             return json.loads(response.read().decode("utf-8"))
-    except: # pylint: disable=bare-except
+    except Exception:
         return {"list": []}
 
 
