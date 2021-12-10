@@ -7,7 +7,6 @@ from core.basecog import BaseCog
 async def user_in_voice_channel(ctx: commands.Context) -> bool:
     """Check if user is in a voice channel"""
     if ctx.author.voice is None:
-        await ctx.send("Come tell me this personally. Coward.")
         return False
     return True
 
