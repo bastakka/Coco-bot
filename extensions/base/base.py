@@ -110,8 +110,10 @@ class Base(BaseCog):
     @commands.command()
     async def shutdown(self, ctx) -> None:
         """Shutdown command"""
+        time_now = datetime.now().replace(microsecond=0)
+        delta = time_now - self.time_of_boot
         embed = make_embed("Shutting down...")
-        embed.add_field(name="Uptime", value=str(datetime.now() - self.time_of_boot))
+        embed.add_field(name="Uptime", value=str(delta))
         await ctx.send(embed=embed)
         await self.bot.close()
         sys.exit(0)
@@ -120,11 +122,11 @@ class Base(BaseCog):
     @commands.command()
     async def restart(self, ctx) -> None:
         """Restart command"""
-        await self.bot.change_presence(activity=discord.Game(name="Restarting..."))
-        embed = make_embed("Restarting...")
         time_now = datetime.now().replace(microsecond=0)
         delta = time_now - self.time_of_boot
+        embed = make_embed("Restarting...")
         embed.add_field(name="Uptime", value=str(delta))
         await ctx.send(embed=embed)
+        await self.bot.change_presence(activity=discord.Game(name="Restarting..."))
         sys.stdout.flush()
         os.execv(sys.executable, ["python"] + sys.argv)
