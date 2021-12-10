@@ -1,7 +1,7 @@
 """DiscordTogether bot commands cog module"""
-from core.basecog import BaseCog
 from discord.ext import commands
 from discord_together import DiscordTogether
+from core.basecog import BaseCog
 
 
 async def user_in_voice_channel(ctx: commands.Context) -> bool:

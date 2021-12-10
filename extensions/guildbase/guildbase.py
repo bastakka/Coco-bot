@@ -1,13 +1,9 @@
 """Guildbase bot commands cog module"""
-from core.basecog import BaseCog
 from discord.ext import commands
+from core.basecog import BaseCog
 
 class GuildBase(BaseCog):
     """Bot base commands and listeners class"""
-
-    def __init__(self, bot: commands.Bot) -> None:
-        """GuildBase class init"""
-        super().__init__(bot)
 
     @commands.cooldown(rate=1, per=20.0, type=commands.BucketType.channel)
     @commands.is_owner()

@@ -4,8 +4,8 @@ import time
 
 import discord
 import openai
-from core.basecog import BaseCog
 from discord.ext import commands
+from core.basecog import BaseCog
 
 from .chatlog import ChatLog
 
@@ -62,7 +62,7 @@ class OpenAI(BaseCog):
             if message.author.bot:
                 return
             if message.content.lower().startswith(self.config.default_prefix):
-                        # Ignore commands in Direct message
+                # Ignore commands in Direct message
                 return  # Which is always default prefix from bot.py
             text_channel = message.channel
 
@@ -70,7 +70,7 @@ class OpenAI(BaseCog):
             log_message = log_user + " issued `openai` in Direct message."
             self.logger.debug(log_message)
             start = time.time()
-            
+
             async with text_channel.typing():
                 content = message.content
                 author = message.author

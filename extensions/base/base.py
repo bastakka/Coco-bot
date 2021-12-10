@@ -4,8 +4,8 @@ import sys
 from datetime import datetime
 
 import discord
-from core.basecog import BaseCog
 from discord.ext import commands
+from core.basecog import BaseCog
 
 
 def make_embed(title, description=None, color=0xFFFF00) -> discord.Embed:
@@ -36,42 +36,42 @@ class Base(BaseCog):
     @commands.Cog.listener()
     async def on_guild_join(self, guild: discord.Guild) -> None:
         """On guild join listener for logging"""
-        self.logger.info(f"Joined guild {guild.name} - {guild.id}")
+        self.logger.info("Joined guild %s - %i", guild.name, guild.id)
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild: discord.Guild) -> None:
         """On guild remove listener for logging"""
-        self.logger.info(f"Left guild {guild.name} - {guild.id}")
+        self.logger.info("Left guild %s - %i", guild.name, guild.id)
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member) -> None:
         """On member join listener for logging"""
-        self.logger.info(f"{member} joined {member.guild}")
+        self.logger.info("%s joined %s", member.nick, member.guild)
 
     @commands.Cog.listener()
     async def on_member_remove(self, member: discord.Member) -> None:
         """On member remove listener for logging"""
-        self.logger.info(f"{member} left {member.guild}")
+        self.logger.info("%s left %s", member.nick, member.guild)
 
     @commands.Cog.listener()
     async def on_member_ban(self, guild: discord.Guild, user: discord.User) -> None:
         """On member ban listener for logging"""
-        self.logger.info(f"{user} was banned from {guild}")
+        self.logger.info("%s banned %s", user.name, guild)
 
     @commands.Cog.listener()
     async def on_member_unban(self, guild: discord.Guild, user: discord.User) -> None:
         """On member unban listener for logging"""
-        self.logger.info(f"{user} was unbanned from {guild}")
+        self.logger.info("%s was unbanned from %s", user.name, guild)
 
     @commands.Cog.listener()
     async def on_guild_channel_create(self, channel: discord.TextChannel) -> None:
         """On guild channel create listener for logging"""
-        self.logger.info(f"{channel.guild} created {channel}")
+        self.logger.info("%s created channel %s", channel.guild, channel.name)
 
     @commands.Cog.listener()
     async def on_guild_channel_delete(self, channel: discord.TextChannel) -> None:
         """On guild channel delete listener for logging"""
-        self.logger.info(f"{channel.guild} deleted {channel}")
+        self.logger.info("%s deleted channel %s", channel.guild, channel.name)
 
     @commands.Cog.listener()
     async def on_message_delete(self, message: discord.Message) -> None:
@@ -79,7 +79,11 @@ class Base(BaseCog):
         if message.guild is None:
             return
         if message.guild.id == self.config.bot_log_channel_id:
-            self.logger.info(f"{message.author} deleted {message}")
+            self.logger.info(
+                "%s's message was deleted. Content:\n'%s'",
+                message.author,
+                message.content,
+            )
 
     @commands.cooldown(rate=1, per=5, type=commands.BucketType.channel)
     @commands.command()
@@ -124,8 +128,3 @@ class Base(BaseCog):
         await ctx.send(embed=embed)
         sys.stdout.flush()
         os.execv(sys.executable, ["python"] + sys.argv)
-
-    @commands.user_command(name="Say Hello")
-    async def hello(self, ctx, user) -> None:  # pylint: disable=no-self-use
-        """Say hello command"""
-        await ctx.send(f"{ctx.author.mention} says hello to {user.name}!")

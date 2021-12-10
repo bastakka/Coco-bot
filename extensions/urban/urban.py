@@ -4,8 +4,8 @@ from urllib.parse import quote as urlquote
 from urllib.request import urlopen
 
 import discord
-from core.basecog import BaseCog
 from discord.ext import commands
+from core.basecog import BaseCog
 
 from .definition import Definition
 
