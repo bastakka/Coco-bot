@@ -7,12 +7,21 @@
     "color": "0xffff00",
     "logo_url": "",
     "invite_url": "",
-    "debug" : "False"
+    "debug": "False"
   },
 
   "extensions": {
     "enabled": [],
-    "disabled": ["reddit", "openaichat", "music", "party", "weeb", "urbandictionary"]
+    "disabled": [
+      "reddit",
+      "openaichat",
+      "music",
+      "party",
+      "weeb",
+      "urbandictionary",
+      "base",
+      "guildbase"
+    ]
   },
   "reddit": {
     "id": 0,

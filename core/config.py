@@ -104,7 +104,7 @@ class Config:
         """Save the configuration"""
         if not self.config.get("bot").get("prefixes"):
             self.config["bot"]["prefixes"] = self.prefixes
-        with open("config.json", "w", encoding="utf-8") as config_file:
+        with open("config/config.json", "w", encoding="utf-8") as config_file:
             json.dump(self.config, config_file, indent=4)
 
     def enable_extension(self, extension: str) -> None:

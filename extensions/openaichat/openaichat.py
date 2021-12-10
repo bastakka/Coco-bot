@@ -1,4 +1,4 @@
-"""Module which contains all the commands for the OpenAI extension."""
+"""OpenAI bot commands cog module."""
 import os
 import time
 
@@ -11,7 +11,7 @@ from .chatlog import ChatLog
 
 
 class OpenAI(BaseCog):
-    """Bot openai related commands cog"""
+    """Bot openai commands and direct message handler cog"""
 
     def __init__(self, bot: commands.Bot) -> None:
         """Chat class init with empty chat log for each user.
@@ -19,7 +19,6 @@ class OpenAI(BaseCog):
         Loads an openai API key from config, which it uses to access Completion engine
         """
         super().__init__(bot)
-        self.bot = bot
         self.chats = {}
         openai.api_key = self.config.openai["key"]
 
@@ -58,22 +57,20 @@ class OpenAI(BaseCog):
 
         If the message is a command, it will be ignored.
         """
-        if message.author.bot:
-            return
-
-        if message.content.lower().startswith(
-            "coco "
-        ):  # Ignore commands in Direct message
-            return  # Which is always "coco " from bot.py
 
         if message.guild is None:
+            if message.author.bot:
+                return
+            if message.content.lower().startswith(self.config.default_prefix):
+                        # Ignore commands in Direct message
+                return  # Which is always default prefix from bot.py
             text_channel = message.channel
             async with text_channel.typing():
                 log_channel = self.bot.get_channel(int(self.config.bot_log_channel_id))
                 log_user = f"{message.author.name}#{message.author.discriminator}"
                 log_message = log_user + " issued `openai` in Direct message."
                 await log_channel.send(log_message)
-                self.logger.info(log_message)
+                self.logger.debug(log_message)
                 start = time.time()
 
                 content = message.content
@@ -85,7 +82,7 @@ class OpenAI(BaseCog):
                 delta = end - start
                 log_message = "Openai response took: "
                 log_message += f" {format(delta, '.2f')} seconds."
-                self.logger.info(log_message)
+                self.logger.debug(log_message)
             await log_channel.send(log_message)
 
     @commands.command()
@@ -101,7 +98,7 @@ class OpenAI(BaseCog):
         async with ctx.typing():
             author = ctx.author
             answer = self._get_ai_response(author, message)
-        await ctx.send(answer)
+        await ctx.respond(answer)
 
     @commands.command()
     async def log(self, ctx: commands.Context):
@@ -112,10 +109,10 @@ class OpenAI(BaseCog):
         chatlog = self._get_chatlog_from_userid(ctx.author, self.bot.user.name).strip()
         if len(chatlog) > 2000:
             await ctx.send("Chat log is too long to be sent to user.")
-            with open("chatlog.tmp", "w", encoding="utf-8") as temp_file:
+            with open("chatlog.txt", "w", encoding="utf-8") as temp_file:
                 temp_file.write(chatlog)
-                await ctx.send(file=discord.File("chatlog.tmp"))
-                os.remove("chatlog.tmp")
+                await ctx.send(file=discord.File("chatlog.txt"))
+                os.remove("chatlog.txt")
             return
         chatlog = f"```{chatlog}```"
         await ctx.send(chatlog)

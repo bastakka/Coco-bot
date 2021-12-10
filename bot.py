@@ -37,9 +37,9 @@ async def get_prefix(bot, message):
         prefix = config.prefixes.get(str(message.guild.id))
     return commands.when_mentioned_or(prefix)(bot, message)
 
-logger.info("Coco started at %s", datetime.now())
+logger.info("Coco started at %s", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
 coco = commands.Bot(intents=intents, command_prefix=get_prefix, case_insensitive=True)
-
+coco.remove_command("help")
 
 @coco.event
 async def on_ready() -> None:
@@ -126,7 +126,6 @@ print(f"{Fore.YELLOW}[✓] Enabled extensions: " + ", ".join(config.extensions_e
 for extension in config.extensions_enabled:
     try:
         coco.load_extension(f"extensions.{extension}")
-        logger.info("Extension %s loaded succesfully", extension)
     except Exception as exception: # pylint: disable=broad-except
         error_message = f"{extension.capitalize()} failed to load.\n{exception}"
         logger.error(error_message)
