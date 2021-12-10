@@ -15,6 +15,7 @@ async def user_in_voice_channel(ctx: commands.Context) -> bool:
 class Party(BaseCog):
     """Bot discord_together commands"""
 
+    @commands.check(user_in_voice_channel)
     @commands.command()
     async def party(self, ctx: commands.Context, activity: str = "youtube") -> None:
         """Creates link for discord together activity"""
