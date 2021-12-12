@@ -40,6 +40,7 @@ class ExtensionManager(BaseCog):
                 except Exception as e:
                     self.logger.error("Failed to enable extension `%s`", extension)
                     await ctx.send(f"Error enabling extension `{extension}`: {e}")
+                    continue
             await ctx.send(f"Extension `{extension}` not found")
 
     @commands.is_owner()
@@ -61,6 +62,7 @@ class ExtensionManager(BaseCog):
                 except Exception as e:
                     self.logger.error("Failed to disable extension `%s`", extension)
                     await ctx.send(f"Error disabling extension `{extension}`: {e}")
+                    continue
             await ctx.send(f"Extension `{extension}` not found")
 
     @commands.is_owner()

@@ -5,9 +5,11 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 from colorlog import ColoredFormatter
+from core.config import get_config
 
+config = get_config()
 
-def get_logger(name, debug=False):
+def get_logger(name):
     """Returns logger formated for both console and file"""
     logger = logging.getLogger(name)
     if logger.hasHandlers():
@@ -33,5 +35,5 @@ def get_logger(name, debug=False):
     logger.addHandler(file_handler)
     logger.addHandler(console_handler)
 
-    logger.setLevel(logging.DEBUG if debug else logging.WARNING)
+    logger.setLevel(logging.DEBUG if config.debug else logging.WARNING)
     return logger

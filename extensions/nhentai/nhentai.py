@@ -2,7 +2,6 @@
 import discord
 from discord.ext import commands
 from hentai import Hentai, Utils
-from core import checks
 from core.basecog import BaseCog
 from .doujin import Doujin
 
@@ -28,7 +27,12 @@ def make_doujin_embed(doujin: Doujin) -> discord.Embed:
 class Nhentai(BaseCog):
     """Bot nhentai commands cog"""
 
-    @commands.check(checks.is_nsfw)
+    def cog_check(self, ctx: commands.Context) -> bool:
+        """Check if command is in nsfw channel or DM"""
+        if ctx.guild is None:
+            return True
+        return ctx.channel.is_nsfw()
+
     @commands.command(name="numbers")
     async def _numbers(self, ctx: commands.Context, numbers) -> None:
         """Returns custom doujin embed from ID of doujin on nhentai"""
@@ -48,14 +52,12 @@ class Nhentai(BaseCog):
         else:
             await ctx.send("You got the wrong numbers buddy")
 
-    @commands.check(checks.is_nsfw)
     @commands.command()
     async def numbers_random(self, ctx: commands.Context) -> None:
         """Passes output of hentai.Utils random to _numbers command"""
         doujin = Utils.get_random_hentai()
         await ctx.invoke(self._numbers, doujin.id)
 
-    @commands.check(checks.is_nsfw)
     @commands.command()
     async def numbers_search(self, ctx: commands.Context, *, query: str) -> None:
         """Searches for doujin by query and passes output to _numbers command"""

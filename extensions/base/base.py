@@ -5,10 +5,11 @@ from datetime import datetime
 
 import discord
 from discord.ext import commands
+from youtube_dl.utils import shell_quote
 from core.basecog import BaseCog
 
 
-def make_embed(title, description=None, color=0xFFFF00) -> discord.Embed:
+def _make_embed(title, description=None, color=0xFFFF00) -> discord.Embed:
     """Make an embed"""
     embed = discord.Embed(
         title=title, description=description if description else "", color=color
@@ -91,7 +92,7 @@ class Base(BaseCog):
         """Uptime command"""
         time_now = datetime.now().replace(microsecond=0)
         delta = time_now - self.time_of_boot
-        embed = make_embed("Uptime")
+        embed = _make_embed("Uptime")
         embed.add_field(
             name="Boot time", value=self.time_of_boot.strftime("%d/%m/%Y %H:%M:%S")
         )
@@ -102,7 +103,7 @@ class Base(BaseCog):
     @commands.command()
     async def ping(self, ctx) -> None:
         """Ping command"""
-        embed = make_embed("Pong!")
+        embed = _make_embed("Pong!")
         embed.add_field(name="Latency", value=f"{round(self.bot.latency * 1000)}ms")
         await ctx.send(embed=embed)
 
@@ -112,7 +113,7 @@ class Base(BaseCog):
         """Shutdown command"""
         time_now = datetime.now().replace(microsecond=0)
         delta = time_now - self.time_of_boot
-        embed = make_embed("Shutting down...")
+        embed = _make_embed("Shutting down...")
         embed.add_field(name="Uptime", value=str(delta))
         await ctx.send(embed=embed)
         await self.bot.close()
@@ -124,9 +125,21 @@ class Base(BaseCog):
         """Restart command"""
         time_now = datetime.now().replace(microsecond=0)
         delta = time_now - self.time_of_boot
-        embed = make_embed("Restarting...")
+        embed = _make_embed("Restarting...")
         embed.add_field(name="Uptime", value=str(delta))
         await ctx.send(embed=embed)
         await self.bot.change_presence(activity=discord.Game(name="Restarting..."))
         sys.stdout.flush()
         os.execv(sys.executable, ["python"] + sys.argv)
+
+    @commands.command()
+    async def reload_config(self, ctx: commands.Context) -> None:
+        """Bot command used for reloading config on the go.
+        Usefull to not waste time restarting entire bot for some changes in config.
+
+        Changes in "bot" category are still recommended to be followed up by restart.
+        Outputs successfull reload to channel, where command was invoked.
+        """
+        self.config.reload()
+        await ctx.send("🔁 Config reloaded.", delete_after=10)
+        await ctx.message.delete(delay=10)

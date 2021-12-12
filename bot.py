@@ -13,7 +13,7 @@ init(autoreset=True)
 pretty_errors.activate()
 print(f"{Fore.YELLOW}[*] Coco loading...")
 config = get_config()
-logger = get_logger(__name__, config.debug)
+logger = get_logger(__name__)
 logger.info("Configuration & logger loaded")
 
 
@@ -65,9 +65,7 @@ if config.debug is False:
 
     @coco.event
     async def on_command_error(ctx: commands.Context, error) -> None:
-        """
-        Error handler which informs an user in a funny way.
-        """
+        """Error handler which informs an user in a funny way."""
         if isinstance(error, commands.CommandNotFound):
             pass
         elif isinstance(error, commands.MissingRequiredArgument):
@@ -88,9 +86,6 @@ if config.debug is False:
         elif isinstance(error, commands.CommandInvokeError):
             await ctx.send("An error occured.", delete_after=10)
             await ctx.message.delete(delay=10)
-        elif isinstance(error, commands.CheckFailure):
-            await ctx.send("Who are you to command me like that.", delete_after=10)
-            await ctx.message.delete(delay=10)
         elif isinstance(error, commands.MissingPermissions):
             await ctx.send("Who are you to command me like that.", delete_after=10)
             await ctx.message.delete(delay=10)
@@ -102,33 +97,22 @@ if config.debug is False:
     async def on_error(event, *args, **kwargs) -> None:
         """Error handler for internal errors."""
         logger.error(
-            "An error occured in %s with arguments %s and kwarguments %s",
+            "An error occured in %s with arguments %s from %s and kwargs %s",
             event,
-            args,
+            args[0].content if args else "none",
+            args[0].author if args else "no one",
             kwargs,
         )
 
-# @commands.check(lambda ctx: ctx.guild is None)
-@coco.command()
-async def reload_config(ctx: commands.Context) -> None:
-    """Bot command used for reloading config on the go.
-    Usefull to not waste time restarting entire bot for some changes in config.
-
-    Changes in "bot" category are still recommended to be followed up by restart.
-    Outputs successfull reload to channel, where command was invoked.
-    """
-    config.reload()
-    await ctx.send("🔁 Config reloaded.", delete_after=10)
-    await ctx.message.delete(delay=10)
-
 print(f"{Fore.YELLOW}[*] Extensions loading...")
-print(f"{Fore.YELLOW}[✓] Enabled extensions: " + ", ".join(config.extensions_enabled))
 for extension in config.extensions_enabled:
     try:
         coco.load_extension(f"extensions.{extension}")
+        logger.info(f"Extension {extension} loaded")
     except Exception as exception: # pylint: disable=broad-except
         error_message = f"{extension.capitalize()} failed to load.\n{exception}"
         logger.error(error_message)
+print(f"{Fore.YELLOW}[✓] Enabled extensions: " + ", ".join(extension.split(".")[1] for extension in coco.extensions))
 print(f"{Fore.YELLOW}[✗] Disabled extensions: " + ", ".join(config.extensions_disabled))
 
 coco.run(config.bot_token)

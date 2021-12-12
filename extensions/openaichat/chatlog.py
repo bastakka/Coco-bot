@@ -33,6 +33,7 @@ class ChatLog:
             "excited",
             "frustrated",
             "happy",
+            "horny",
             "hurt",
             "inspired",
             "jealous",

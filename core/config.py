@@ -57,9 +57,9 @@ class Config:
         return self._get("bot", "token")
 
     @property
-    def bot_owner(self) -> str:
+    def bot_owner_id(self) -> str:
         """Get the bot owner"""
-        return self._get("bot", "owner")
+        return self._get("bot", "owner_id")
 
     @property
     def bot_log_channel_id(self) -> str:

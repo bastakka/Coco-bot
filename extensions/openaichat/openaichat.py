@@ -22,23 +22,23 @@ class OpenAI(BaseCog):
         self.chats = {}
         openai.api_key = self.config.openai["key"]
 
-    def _get_chatlog_from_userid(self, author, botname) -> str:
+    def _get_chatlog_from_user(self, user, botname) -> ChatLog:
         """Get chatlog from user id."""
-        if author.id not in self.chats:
-            self.chats[author.id] = ChatLog(author, botname)
-        return str(self.chats[author.id])
+        if user.id not in self.chats:
+            self.chats[user.id] = ChatLog(user, botname)
+        return self.chats[user.id]
 
     def _get_ai_response(self, author, message: str) -> str:
         """Get AI response from user_id and prompt.
 
         Response is generator from davinci engine using log bound to user and prompt."""
         botname = self.bot.user.name
-        chatlog = self._get_chatlog_from_userid(author, botname)
+        chatlog = str(self._get_chatlog_from_user(author, botname))
         prompt = f"{chatlog}\n{author.name}: {message}\n{botname}: "
         response = openai.Completion.create(
             prompt=prompt,
             engine="davinci",
-            stop=[f"\n{author.name}", f"\n{botname}"],
+            stop=[f"\n{author.name}", f"\n{botname}", f" {author.name}:", f" {botname}:"],
             temperature=0.8,
             top_p=1,
             frequency_penalty=0.7,
@@ -96,15 +96,23 @@ class OpenAI(BaseCog):
         async with ctx.typing():
             author = ctx.author
             answer = self._get_ai_response(author, message)
-        await ctx.respond(answer)
+        await ctx.send(answer)
 
     @commands.command()
-    async def log(self, ctx: commands.Context):
+    async def log(self, ctx: commands.Context, query_id: int = 0):
         """Bot command that shows user's openai chat log.
 
         Chat log is sent to user as a string
         """
-        chatlog = self._get_chatlog_from_userid(ctx.author, self.bot.user.name).strip()
+        user = ctx.author
+        if ctx.author.id == self.config.bot_owner_id:
+            print(self.chats)
+            if query_id not in self.chats:
+                return await ctx.send(f"{query_id} not in chat logs.")
+            user = self.bot.get_user(query_id)
+            if user is None:
+                return await ctx.send("User not found.")
+        chatlog = str(self._get_chatlog_from_user(user, self.bot.user.name)).strip()
         if len(chatlog) > 2000:
             await ctx.send("Chat log is too long to be sent to user.")
             with open("chatlog.txt", "w", encoding="utf-8") as temp_file:
@@ -121,5 +129,6 @@ class OpenAI(BaseCog):
 
         Chat log is reinitialized as a new deque list of maximum len of 20
         """
-        self.chats[ctx.author.id].clear()
+        chatlog = self._get_chatlog_from_user(ctx.author, self.bot.user.name)
+        chatlog.clear()
         await ctx.send("Chat log cleared.")

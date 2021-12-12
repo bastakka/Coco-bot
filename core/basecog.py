@@ -14,12 +14,7 @@ class BaseCog(commands.Cog):
         """Init base cog class."""
         self.bot = bot
         self.config = get_config()
-        self.logger = get_logger(self.__class__.__name__, self.config.debug)
-
-    @commands.Cog.listener()
-    async def on_ready(self) -> None:
-        """Log when bot is ready."""
-        self.logger.info("%s cog loaded succesfully", self.__class__.__name__)
+        self.logger = get_logger(self.__class__.__name__)
 
     async def cog_before_invoke(self, ctx: commands.Context) -> None:
         """Code that runs before invoked command.
