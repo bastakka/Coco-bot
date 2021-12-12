@@ -5,7 +5,6 @@ from datetime import datetime
 
 import discord
 from discord.ext import commands
-from youtube_dl.utils import shell_quote
 from core.basecog import BaseCog
 
 
