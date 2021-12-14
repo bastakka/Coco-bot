@@ -6,7 +6,7 @@ Type = simple
 Restart = always
 RestartSec = 5
 WorkingDirectory = /srv/coco
-Enviroment = PYTHONBUFFERED = 1
+Environment = PYTHONBUFFERED = 1
 EnvironmentFile = /etc/venv/coco/bin/activate
 ExecStart = /srv/coco/bot.py
 
