@@ -4,6 +4,7 @@ import os
 import discord
 from discord.ext import commands, tasks
 from asyncpraw import Reddit
+from asyncprawcore.exceptions import Redirect
 from core.basecog import BaseCog
 
 
@@ -145,8 +146,8 @@ class RedditHot(BaseCog):
         """Add channel to list of channels to receive hot post form subreddit"""
         try:
             praw_subreddit = await self.reddit.subreddit(subreddit, fetch=True)
-        except Exception as e:
-            return await ctx.send(f"Error in finding subreddit {subreddit}\n{e}")
+        except Redirect:
+            return await ctx.send(f"Subreddit {subreddit} not found.")
         subreddit = praw_subreddit.display_name
         if praw_subreddit.over18 and not ctx.channel.is_nsfw():
             return await ctx.send(f"Shhhh. Not here. Kids are around. {subreddit} is NSFW.")
