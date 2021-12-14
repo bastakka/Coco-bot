@@ -109,7 +109,7 @@ class RedditHot(BaseCog):
     @commands.Cog.listener()
     async def on_ready(self):
         """Bot ready event"""
-        self.reddit_loop.start()
+        self.reddit_loop.start() # pylint: disable=no-member
 
     @tasks.loop(hours=1)
     async def reddit_loop(self):
