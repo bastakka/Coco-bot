@@ -7,8 +7,8 @@ Restart = always
 RestartSec = 5
 WorkingDirectory = /srv/coco
 Environment = PYTHONBUFFERED = 1
-EnvironmentFile = /srv/coco/bin/activate
-ExecStart = /srv/coco/bin/python3 /srv/coco/bot.py
+EnvironmentFile = /srv/coco/venv/bin/activate
+ExecStart = /srv/coco/venv/bin/python3 /srv/coco/bot.py
 
 [Install]
 WantedBy = multi-user.target
