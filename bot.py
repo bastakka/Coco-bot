@@ -70,32 +70,29 @@ if config.debug is False:
         """Error handler which informs an user in a funny way."""
         if isinstance(error, commands.CommandNotFound):
             return
-        elif isinstance(error, commands.MissingRequiredArgument):
+        if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send(
                 "Which song, word, doujin... Am I a fucking genie or what".upper(),
                 delete_after=10,
             )
             await ctx.message.delete(delay=10)
-            return await ctx.message.add_reaction("🤔")
+            await ctx.message.add_reaction("🤔")
         elif isinstance(error, commands.BadArgument):
             await ctx.send("What does this even mean?", delete_after=10)
             await ctx.message.delete(delay=10)
-            return await ctx.message.add_reaction("🤔")
+            await ctx.message.add_reaction("🤔")
         elif isinstance(error, commands.CommandOnCooldown):
             await ctx.send(
                 "Too fast buddy. Try again in {error.retry_after:.2f} seconds.",
                 delete_after=10,
             )
             await ctx.message.delete(delay=10)
-            return
         elif isinstance(error, commands.CommandInvokeError):
             await ctx.send("An error occured.", delete_after=10)
             await ctx.message.delete(delay=10)
-            return
         elif isinstance(error, commands.MissingPermissions):
             await ctx.send("Who are you to command me like that.", delete_after=10)
             await ctx.message.delete(delay=10)
-            return
         else:
             await ctx.send(f"An error occured in command {ctx.command}.\n{error}")
             raise error

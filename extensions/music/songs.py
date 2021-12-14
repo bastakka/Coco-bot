@@ -2,6 +2,7 @@
 import asyncio
 import itertools
 import random
+from typing import Union
 
 import discord
 
@@ -37,7 +38,7 @@ class Song:
 class SongQueue(asyncio.Queue):
     """Class for SongQueue"""
 
-    def __getitem__(self, item) -> Song:
+    def __getitem__(self, item) -> Union[Song, list]:
         """Get item from queue"""
         if isinstance(item, slice):
             return list(itertools.islice(self._queue, item.start, item.stop, item.step))
