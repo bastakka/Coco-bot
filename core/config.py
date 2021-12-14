@@ -29,12 +29,12 @@ class Config:
                 return self.config[group]
             if group in self.default:
                 return self.default[group]
-            return None
+            return ""
         if group in self.config and key in self.config[group]:
             return self.config[group][key]
         if group in self.default and key in self.default[group]:
             return self.default[group][key]
-        return None
+        return ""
 
     def __init__(self) -> None:
         """Initialize the Config class"""

@@ -34,7 +34,7 @@ def _make_urbandict_embed(definition: Definition) -> discord.Embed:
     return embed
 
 
-def _parse_postition(word: str) -> int:
+def _parse_postition(word: str) -> tuple:
     """Parse the position of a definition"""
     position = word.split()[-1]
     if position.startswith("#"):
@@ -58,11 +58,11 @@ def _get_urban_json(url: str) -> dict:
 def _parse_urban_json(json_data: dict, position: int) -> dict:
     """Parse the json data from the urban dictionary api"""
     if json_data["list"] == []:
-        return None
+        return {}
     try:
         return json_data["list"][position]
     except IndexError:
-        return None
+        return {}
 
 
 def _get_urban_definition(word: str, position: int) -> dict:
@@ -84,7 +84,7 @@ class Urban(BaseCog):
         position = max(position, 0)
 
         definition = _get_urban_definition(word, position)
-        if definition is None:
+        if definition == {}:
             await ctx.send("No definition found or index out of range")
             return
 

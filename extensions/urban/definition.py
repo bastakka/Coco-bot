@@ -13,8 +13,6 @@ def _parse_decription(description: str) -> str:
 
 def _parse_example(example: str) -> str:
     """Parse the example of a definition"""
-    if example == "":
-        return False
     example = example.replace("[", "").replace("]", "")
     if len(example) > 1024:
         example = example[:1021] + "..."
@@ -23,10 +21,7 @@ def _parse_example(example: str) -> str:
 
 def _parse_author(author: str) -> str:
     """Parse the author of a definition"""
-    author = author.strip()
-    if author == "":
-        return False
-    return author
+    return author.strip()
 
 
 def _parse_date(date: str) -> datetime:
@@ -38,7 +33,7 @@ class Definition:
     """Definition class for urban json parsing"""
 
     def __init__(self, definition: dict):
-        self.definition = definition
+        self.definition_dict = definition
         self.term = definition["word"]
         self.url = definition["permalink"]
         self.thumbs_up = definition["thumbs_up"]
@@ -48,19 +43,19 @@ class Definition:
     @property
     def description(self) -> str:
         """Definition description property"""
-        return _parse_decription(self.definition["definition"])
+        return _parse_decription(self.definition_dict["definition"])
 
     @property
     def example(self) -> str:
         """Definition example property"""
-        return _parse_example(self.definition["example"])
+        return _parse_example(self.definition_dict["example"])
 
     @property
     def author(self) -> str:
         """Definition author property"""
-        return _parse_author(self.definition["author"]) or "Unknown"
+        return _parse_author(self.definition_dict["author"]) or "Unknown"
 
     @property
     def date(self) -> str:
         """Definition date property"""
-        return _parse_date(self.definition["written_on"]).strftime("%d, %b %Y")
+        return _parse_date(self.definition_dict["written_on"]).strftime("%d, %b %Y")

@@ -115,10 +115,12 @@ class OpenAI(BaseCog):
         chatlog = str(self._get_chatlog_from_user(user, self.bot.user.name)).strip()
         if len(chatlog) > 2000:
             await ctx.send("Chat log is too long to be sent to user.")
-            with open("chatlog.txt", "w", encoding="utf-8") as temp_file:
+            path = os.path.dirname(os.path.abspath(__file__))
+            path += f"/{user.name}_chatlog.txt"
+            with open(path, "w", encoding="utf-8") as temp_file:
                 temp_file.write(chatlog)
-                await ctx.send(file=discord.File("chatlog.txt"))
-                os.remove("chatlog.txt")
+                await ctx.send(file=discord.File(path))
+                os.remove(path)
             return
         chatlog = f"```{chatlog}```"
         await ctx.send(chatlog)
