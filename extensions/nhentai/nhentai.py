@@ -32,6 +32,12 @@ class Nhentai(BaseCog):
         if ctx.guild is None:
             return True
         return ctx.channel.is_nsfw()
+    
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx: commands.Context, error):
+        """Handle command errors"""
+        if isinstance(error, commands.CheckFailure):
+            await ctx.send("Shhhh. Not here. Kids are around.")
 
     @commands.command(name="numbers")
     async def _numbers(self, ctx: commands.Context, numbers) -> None:
