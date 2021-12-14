@@ -1,13 +1,14 @@
 [Unit]
 Description = Coco
+After = network.target
 
 [Service]
 Type = simple
+User = bastakka
 Restart = always
 RestartSec = 5
 WorkingDirectory = /srv/coco
-Environment = PYTHONBUFFERED = 1
-EnvironmentFile = /srv/coco/venv/bin/activate
+Environment = PATH = /srv/coco/venv/bin:$PATH
 ExecStart = /srv/coco/venv/bin/python3 /srv/coco/bot.py
 
 [Install]
