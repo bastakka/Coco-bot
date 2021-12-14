@@ -149,7 +149,7 @@ class RedditHot(BaseCog):
             return await ctx.send(f"Error in finding subreddit {subreddit}\n{e}")
         subreddit = praw_subreddit.display_name
         if praw_subreddit.over18 and not ctx.channel.is_nsfw():
-            return await ctx.send(f"{subreddit} is NSFW, please use a NSFW channel")
+            return await ctx.send(f"Shhhh. Not here. Kids are around. {subreddit} is NSFW.")
         if subreddit not in self.subreddits:
             self.subreddits.update({subreddit: []})
         if ctx.channel.id not in self.subreddits[subreddit]:
