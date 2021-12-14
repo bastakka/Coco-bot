@@ -25,24 +25,24 @@ class Config:
         If key is not present in neither configuration file nor default file, None is returned.
         """
         if key is None:
-            if group in self.config:
-                return self.config[group]
-            if group in self.default:
-                return self.default[group]
+            if group in self.config_json:
+                return self.config_json[group]
+            if group in self.default_json:
+                return self.default_json[group]
             return ""
-        if group in self.config and key in self.config[group]:
-            return self.config[group][key]
-        if group in self.default and key in self.default[group]:
-            return self.default[group][key]
+        if group in self.config_json and key in self.config_json[group]:
+            return self.config_json[group][key]
+        if group in self.default_json and key in self.default_json[group]:
+            return self.default_json[group][key]
         return ""
 
     def __init__(self) -> None:
         """Initialize the Config class"""
         try:
             with open("config/config.json", "r", encoding="utf-8") as config_file:
-                self.config = json.load(config_file)
+                self.config_json = json.load(config_file)
             with open("config/default.json", "r", encoding="utf-8") as default_file:
-                self.default = json.load(default_file)
+                self.default_json = json.load(default_file)
         except FileNotFoundError:
             print(f"{Fore.RED}[✗] Configuration file not found. Exiting...")
             sys.exit(1)
