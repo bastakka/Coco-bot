@@ -9,6 +9,7 @@ from core.config import get_config
 
 config = get_config()
 
+
 def get_logger(name):
     """Returns logger formated for both console and file"""
     logger = logging.getLogger(name)
@@ -21,9 +22,8 @@ def get_logger(name):
     console_formatter = ColoredFormatter(
         "%(log_color)s[%(levelname)s] %(name)s: %(message)s%(reset)s"
     )
-
     file_handler = RotatingFileHandler(
-        "logs/logfile.log", maxBytes=(1048576 * 5), backupCount=7
+        "logs/logfile.log", maxBytes=(1048576 * 5), backupCount=7, encoding="utf-8"
     )
     file_handler.setLevel(logging.INFO)
     file_handler.setFormatter(file_formatter)

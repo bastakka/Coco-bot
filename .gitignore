@@ -137,3 +137,7 @@ assets/images/memes/*
 
 # Temporary files which are not tracked by git
 *.tmp
+
+# Reddit jsons
+/extensions/reddithot/reports.json
+/extensions/reddithot/subreddits.json

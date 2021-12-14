@@ -16,7 +16,7 @@ class BaseCog(commands.Cog):
         self.config = get_config()
         self.logger = get_logger(self.__class__.__name__)
 
-    async def cog_before_invoke(self, ctx: commands.Context) -> None:
+    async def cog_before_invoke(self, ctx: commands.Context) -> commands.Context:
         """Code that runs before invoked command.
 
         Used for logging chat commands.
@@ -27,6 +27,7 @@ class BaseCog(commands.Cog):
         log_message = f"{message} in {chat}."
         self.logger.debug(log_message)
         ctx.start = time.time()
+        return ctx
 
     async def cog_after_invoke(self, ctx: commands.Context) -> None:
         """Code that runs after invoked command.

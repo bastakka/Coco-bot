@@ -3,23 +3,23 @@ import discord
 from discord.ext import commands
 from core.basecog import BaseCog
 
-def make_extensions_embed(config):
-    """Creates an embed for the extensions list"""
-    enabled = ", ".join(extension for extension in config.extensions_enabled)
-    disabled = ", ".join(extension for extension in config.extensions_disabled)
-    embed = discord.Embed(title="Extensions", color=0x000000)
-    embed.add_field(name="Enabled", value=enabled, inline=False)
-    embed.add_field(name="Disabled", value=disabled, inline=False)
-    return embed
-
 class ExtensionManager(BaseCog):
     """Extension manager cog class"""
+
+    def _make_extensions_embed(self):
+        """Creates an embed for the extensions list"""
+        enabled = ", ".join(extension.split(".")[1] for extension in self.bot.extensions)
+        disabled = ", ".join(extension for extension in self.config.extensions_disabled)
+        embed = discord.Embed(title="Extensions", color=0x000000)
+        embed.add_field(name="Enabled", value=enabled, inline=False)
+        embed.add_field(name="Disabled", value=disabled, inline=False)
+        return embed
 
     @commands.is_owner()
     @commands.command()
     async def list_extensions(self, ctx):
         """Lists all extensions"""
-        await ctx.send(embed=make_extensions_embed(self.config))
+        await ctx.send(embed=self._make_extensions_embed())
 
     @commands.is_owner()
     @commands.command()

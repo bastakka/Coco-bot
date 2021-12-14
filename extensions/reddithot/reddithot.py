@@ -156,7 +156,7 @@ class RedditHot(BaseCog):
         if ctx.channel.id not in self.subreddits[subreddit]:
             self.subreddits[subreddit].append(ctx.channel.id)
             self._save_subreddits()
-            return await ctx.send(
+            return await ctx.send(  
                 f"{ctx.channel.mention} is now subscribed to {subreddit}"
             )
         return await ctx.send(
