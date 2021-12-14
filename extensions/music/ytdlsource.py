@@ -6,14 +6,16 @@ import discord
 import youtube_dl
 from discord.ext import commands
 
-youtube_dl.utils.bug_reports_message = lambda: ''
+youtube_dl.utils.bug_reports_message = lambda: ""
+
 
 class YTDLError(Exception):
     """Exception for YTDL errors"""
-    pass
+
 
 class YTDLSource(discord.PCMVolumeTransformer):
     """Class for YTDL Source"""
+
     YTDL_OPTIONS = {
         "format": "bestaudio/best",
         "extractaudio": True,
@@ -26,7 +28,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         "logtostderr": False,
         "quiet": True,
         "no_warnings": True,
-        "default_search": "auto"
+        "default_search": "auto",
     }
 
     FFMPEG_OPTIONS = {
@@ -37,7 +39,14 @@ class YTDLSource(discord.PCMVolumeTransformer):
     ytdl = youtube_dl.YoutubeDL(YTDL_OPTIONS)
     ytdl.cache.remove()
 
-    def __init__(self, ctx: commands.Context, source: discord.FFmpegPCMAudio, *, data: dict, volume: float = 0.5) -> None:
+    def __init__(
+        self,
+        ctx: commands.Context,
+        source: discord.FFmpegPCMAudio,
+        *,
+        data: dict,
+        volume: float = 0.5,
+    ) -> None:
         super().__init__(source, volume)
 
         self.requester = ctx.author
@@ -47,7 +56,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         self.uploader = data.get("uploader")
         self.uploader_url = data.get("uploader_url")
         date = data.get("upload_date")
-        self.upload_date = date[6:8] + '.' + date[4:6] + '.' + date[0:4]
+        self.upload_date = date[6:8] + "." + date[4:6] + "." + date[0:4]
         self.title = data.get("title")
         self.thumbnail = data.get("thumbnail")
         self.description = data.get("description")
@@ -59,16 +68,19 @@ class YTDLSource(discord.PCMVolumeTransformer):
         self.dislikes = data.get("dislike_count")
         self.stream_url = data.get("url")
 
-
     def __str__(self) -> str:
         return f"**{self.title}** by **{self.uploader}**"
 
     @classmethod
-    async def create_source(cls, ctx: commands.Context, search: str, *, loop: asyncio.BaseEventLoop = None) -> "YTDLSource":
+    async def create_source(
+        cls, ctx: commands.Context, search: str, *, loop: asyncio.BaseEventLoop = None
+    ) -> "YTDLSource":
         """Creates a YTDL Source"""
         loop = loop or asyncio.get_event_loop()
 
-        partial = functools.partial(cls.ytdl.extract_info, search, download=False, process=False)
+        partial = functools.partial(
+            cls.ytdl.extract_info, search, download=False, process=False
+        )
         data = await loop.run_in_executor(None, partial)
 
         if data is None:
@@ -101,9 +113,13 @@ class YTDLSource(discord.PCMVolumeTransformer):
                 try:
                     info = processed_info["entries"].pop(0)
                 except IndexError as err:
-                    raise YTDLError(f"Couldn't retrieve any matches for `{webpage_url}`") from err
+                    raise YTDLError(
+                        f"Couldn't retrieve any matches for `{webpage_url}`"
+                    ) from err
 
-        return cls(ctx, discord.FFmpegPCMAudio(info["url"], **cls.FFMPEG_OPTIONS), data=info)
+        return cls(
+            ctx, discord.FFmpegPCMAudio(info["url"], **cls.FFMPEG_OPTIONS), data=info
+        )
 
     @staticmethod
     def parse_duration(duration: int) -> str:

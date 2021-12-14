@@ -2,28 +2,29 @@
 from datetime import datetime
 from dateutil import parser as dateutil_parser
 
+
 def _parse_decription(description: str) -> str:
     """Parse the description of a definition"""
-    description = description.replace('[', '').replace(']', '')
+    description = description.replace("[", "").replace("]", "")
     if len(description) > 1024:
-        description = description[:1021] + '...'
+        description = description[:1021] + "..."
     return description
 
 
 def _parse_example(example: str) -> str:
     """Parse the example of a definition"""
-    if example == '':
+    if example == "":
         return False
-    example = example.replace('[', '').replace(']', '')
+    example = example.replace("[", "").replace("]", "")
     if len(example) > 1024:
-        example = example[:1021] + '...'
+        example = example[:1021] + "..."
     return example
 
 
 def _parse_author(author: str) -> str:
     """Parse the author of a definition"""
     author = author.strip()
-    if author == '':
+    if author == "":
         return False
     return author
 
@@ -37,12 +38,29 @@ class Definition:
     """Definition class for urban json parsing"""
 
     def __init__(self, definition: dict):
-        self.term = definition['word']
-        self.url = definition['permalink']
-        self.description = _parse_decription(definition['definition'])
-        self.example = _parse_example(definition['example'])
-        self.author = _parse_author(definition['author']) or 'Unknown'
-        self.thumbs_up = definition['thumbs_up']
-        self.thumbs_down = definition['thumbs_down']
+        self.definition = definition
+        self.term = definition["word"]
+        self.url = definition["permalink"]
+        self.thumbs_up = definition["thumbs_up"]
+        self.thumbs_down = definition["thumbs_down"]
         self.thumbs_balance = self.thumbs_up - self.thumbs_down
-        self.date = _parse_date(definition['written_on']).strftime('%d, %b %Y')
+
+    @property
+    def description(self) -> str:
+        """Definition description property"""
+        return _parse_decription(self.definition["definition"])
+
+    @property
+    def example(self) -> str:
+        """Definition example property"""
+        return _parse_example(self.definition["example"])
+
+    @property
+    def author(self) -> str:
+        """Definition author property"""
+        return _parse_author(self.definition["author"]) or "Unknown"
+
+    @property
+    def date(self) -> str:
+        """Definition date property"""
+        return _parse_date(self.definition["written_on"]).strftime("%d, %b %Y")

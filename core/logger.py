@@ -19,7 +19,7 @@ def get_logger(name):
         "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
     )
     console_formatter = ColoredFormatter(
-        "%(log_color)s[%(levelname)s]: %(message)s%(reset)s"
+        "%(log_color)s[%(levelname)s] %(name)s: %(message)s%(reset)s"
     )
 
     file_handler = RotatingFileHandler(

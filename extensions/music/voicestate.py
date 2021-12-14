@@ -1,15 +1,16 @@
 """Module with Voicestate class for music cog"""
 import asyncio
+import discord
 
 from async_timeout import timeout
 from discord.ext import commands
 
 from .songs import SongQueue
+from .ytdlsource import YTDLSource
 
 
 class VoiceError(Exception):
     """Exception for voice related errors"""
-    pass
 
 
 class VoiceState:
@@ -23,7 +24,6 @@ class VoiceState:
         self.voice = None
         self.next = asyncio.Event()
         self.songs = SongQueue()
-        self.exists = True
 
         self._loop = False
         self._volume = 0.5
@@ -42,13 +42,19 @@ class VoiceState:
         while True:
             self.next.clear()
 
-            if not self.loop and not self.songs:
+            if self.loop:
+                source_audio = discord.FFmpegPCMAudio(
+                    self.current.source.stream_url, **YTDLSource.FFMPEG_OPTIONS
+                )
+                self.current.source = discord.PCMVolumeTransformer(
+                    source_audio, self._volume
+                )
+            else:
                 try:
                     async with timeout(180):
                         self.current = await self.songs.get()
                 except asyncio.TimeoutError:
                     self.bot.loop.create_task(self.stop())
-                    self.exists = False
                     return
 
             self.current.source.volume = self.volume
@@ -56,7 +62,7 @@ class VoiceState:
             await self.current.source.channel.send(embed=self.current.make_song_embed())
             await self.next.wait()
 
-    def play_next_song(self, error: Exception) -> None:
+    def play_next_song(self, error: Exception = None) -> None:
         """Play next song"""
         if error:
             raise VoiceError(str(error))
@@ -95,5 +101,3 @@ class VoiceState:
     def loop(self, value: bool) -> None:
         """Set loop"""
         self._loop = value
-        if self.is_playing:
-            self.current.source.loop = value

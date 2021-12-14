@@ -22,7 +22,7 @@ class Music(BaseCog):
     def _get_voice_state(self, ctx) -> VoiceState:
         """Get the voice state for the current channel"""
         state = self.voice_states.get(ctx.guild.id)
-        if not state or not state.exists:
+        if not state:
             state = VoiceState(self.bot, ctx)
             self.voice_states[ctx.guild.id] = state
         return state
@@ -30,7 +30,7 @@ class Music(BaseCog):
     def cog_check(self, ctx: commands.Context) -> bool:
         """Check if the user is in a voice channel"""
         if ctx.author.voice is None:
-            ctx.send("You must be in a voice channel to use this command.")
+            ctx.send("Stop bothering me, when you are not in a voice channel.")
             return False
         return True
 
@@ -41,6 +41,7 @@ class Music(BaseCog):
         chat = ctx.guild.name if ctx.guild else "Direct message"
         log_message = f"{message} in {chat}."
         self.logger.debug(log_message)
+
         ctx.start = time.time()
         ctx.voice_state = self._get_voice_state(ctx)
 

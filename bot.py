@@ -37,9 +37,11 @@ async def get_prefix(bot, message):
         prefix = config.prefixes.get(str(message.guild.id))
     return commands.when_mentioned_or(prefix)(bot, message)
 
+
 logger.info("Coco started at %s", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
 coco = commands.Bot(intents=intents, command_prefix=get_prefix, case_insensitive=True)
 coco.remove_command("help")
+
 
 @coco.event
 async def on_ready() -> None:
@@ -104,15 +106,19 @@ if config.debug is False:
             kwargs,
         )
 
+
 print(f"{Fore.YELLOW}[*] Extensions loading...")
 for extension in config.extensions_enabled:
     try:
         coco.load_extension(f"extensions.{extension}")
-        logger.info(f"Extension {extension} loaded")
-    except Exception as exception: # pylint: disable=broad-except
-        error_message = f"{extension.capitalize()} failed to load.\n{exception}"
+        logger.info("Extension %s loaded", extension)
+    except Exception as e:
+        error_message = f"{extension.capitalize()} failed to load.\n{e}"
         logger.error(error_message)
-print(f"{Fore.YELLOW}[✓] Enabled extensions: " + ", ".join(extension.split(".")[1] for extension in coco.extensions))
+print(
+    f"{Fore.YELLOW}[✓] Enabled extensions: "
+    + ", ".join(extension.split(".")[1] for extension in coco.extensions)
+)
 print(f"{Fore.YELLOW}[✗] Disabled extensions: " + ", ".join(config.extensions_disabled))
 
 coco.run(config.bot_token)

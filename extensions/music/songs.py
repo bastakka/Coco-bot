@@ -41,8 +41,7 @@ class SongQueue(asyncio.Queue):
         """Get item from queue"""
         if isinstance(item, slice):
             return list(itertools.islice(self._queue, item.start, item.stop, item.step))
-        else:
-            return self._queue[item]
+        return self._queue[item]
 
     def __iter__(self) -> iter:
         """Iterate over queue"""

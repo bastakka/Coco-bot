@@ -80,6 +80,7 @@ class ExtensionManager(BaseCog):
                 except Exception as e:
                     self.logger.error("Failed to reload extension `%s`", extension)
                     await ctx.send(f"Error reloading extension `{extension}`: {e}")
+                    continue
             if extension in self.config.extensions_disabled:
                 await ctx.send(f"Extension `{extension}` is disabled")
                 continue
