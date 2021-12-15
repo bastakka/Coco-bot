@@ -123,7 +123,7 @@ class RedditHot(BaseCog):
         for subreddit in self.subreddits:
             self.logger.debug("Fetching %s...", subreddit)
             praw_subreddit = await self.reddit.subreddit(subreddit, fetch=True)
-            async for submission in praw_subreddit.hot(limit=8):
+            async for submission in praw_subreddit.hot(limit=6):
                 if submission.id not in self.reposts:
                     self.logger.debug("Found new submission: %s", submission.id)
                     self.reposts[submission.id] = 0
