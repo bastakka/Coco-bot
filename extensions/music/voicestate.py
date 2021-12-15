@@ -49,7 +49,7 @@ class VoiceState:
         """Check if player is playing"""
         try:
             return self.voice.is_playing()
-        except:
+        except Exception:
             return False
     
     def is_paused(self) -> bool:
