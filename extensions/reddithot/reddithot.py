@@ -176,6 +176,6 @@ class RedditHot(BaseCog):
             self.subreddits[subreddit].remove(ctx.channel.id)
             self._save_subreddits()
             return await ctx.send(
-                f"{ctx.channel.mention} is no longer subscribed {subreddit}"
+                f"{ctx.channel.mention} is no longer subscribed to {subreddit}"
             )
         return await ctx.send(f"{ctx.channel.mention} is not subscribed to {subreddit}")
