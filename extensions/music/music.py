@@ -160,7 +160,7 @@ class Music(BaseCog):
         """Loop the currently playing song"""
         if await _is_playing(ctx):
             ctx.voice_state.loop = not ctx.voice_state.loop
-            negative = "not " if ctx.voice_state.loop else ""
+            negative = "" if ctx.voice_state.loop else "not "
             await ctx.send(f"Song will now {negative}loop.")
 
     @commands.command(name="shuffle")
