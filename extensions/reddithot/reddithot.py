@@ -23,7 +23,9 @@ async def _make_reddit_embed(submission):
         icon_url=submission.subreddit.icon_img,
     )
     if not submission.is_self:
-        if submission.url.startswith("https://i.redd.it"):
+        if submission.url.startswith("https://i.redd.it") or submission.url.startswith(
+            "https://i.imgur.com"
+        ):
             embed.set_image(url=submission.url)
         else:
             embed.add_field(
@@ -110,7 +112,7 @@ class RedditHot(BaseCog):
     @commands.Cog.listener()
     async def on_ready(self):
         """Bot ready event"""
-        self.reddit_loop.start() # pylint: disable=no-member
+        self.reddit_loop.start()  # pylint: disable=no-member
 
     @tasks.loop(hours=1)
     async def reddit_loop(self):
@@ -150,13 +152,15 @@ class RedditHot(BaseCog):
             return await ctx.send(f"Subreddit {subreddit} not found.")
         subreddit = praw_subreddit.display_name
         if praw_subreddit.over18 and not ctx.channel.is_nsfw():
-            return await ctx.send(f"Shhhh. Not here. Kids are around. {subreddit} is NSFW.")
+            return await ctx.send(
+                f"Shhhh. Not here. Kids are around. {subreddit} is NSFW."
+            )
         if subreddit not in self.subreddits:
             self.subreddits.update({subreddit: []})
         if ctx.channel.id not in self.subreddits[subreddit]:
             self.subreddits[subreddit].append(ctx.channel.id)
             self._save_subreddits()
-            return await ctx.send(  
+            return await ctx.send(
                 f"{ctx.channel.mention} is now subscribed to {subreddit}"
             )
         return await ctx.send(
