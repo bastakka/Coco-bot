@@ -139,5 +139,5 @@ assets/images/memes/*
 *.tmp
 
 # Reddit jsons
-/extensions/reddithot/reports.json
-/extensions/reddithot/subreddits.json
+extensions/reddithot/reposts.json
+extensions/reddithot/subreddits.json
