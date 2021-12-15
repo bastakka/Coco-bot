@@ -7,9 +7,8 @@ Type = simple
 User = bastakka
 Restart = always
 RestartSec = 5
-WorkingDirectory = /srv/coco
-Environment = PATH = /srv/coco/venv/bin:$PATH
-ExecStart = /srv/coco/venv/bin/python3 /srv/coco/bot.py
+WorkingDirectory = /srv/coco-ch/
+ExecStart = /srv/coco-ch/venv/bin/python3 /srv/coco-ch/bot.py
 
 [Install]
 WantedBy = multi-user.target
