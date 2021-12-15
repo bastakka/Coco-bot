@@ -39,7 +39,7 @@ class VoiceState:
     def volume(self, value: float) -> None:
         """Set volume"""
         self._volume = value
-        if self.is_playing:
+        if self.voice:
             self.current.source.volume = value
 
     def __del__(self) -> None:
@@ -47,7 +47,10 @@ class VoiceState:
     
     def is_playing(self) -> bool:
         """Check if player is playing"""
-        return self.voice
+        try:
+            return self.voice.is_playing()
+        except:
+            return False
     
     def is_paused(self) -> bool:
         """Check if player is paused"""
@@ -55,7 +58,7 @@ class VoiceState:
     
     def skip(self) -> None:
         """Skip song"""
-        if self.is_playing:
+        if self.voice:
             self.voice.stop()
 
     def shuffle(self) -> None:
@@ -87,15 +90,15 @@ class VoiceState:
         
     async def add_song(self, query: str) -> Song:
         """Add song to queue"""
-        source = await YTDLSource.create_source(self.ctx, query)
         try:
+            source = await YTDLSource.create_source(self.ctx, query)
             song = Song(source)
         except YTDLError as err:
             raise VoiceError(str(err))
         await self.songs.put(song)
         return song
 
-    async def redo_song(self) -> None:
+    async def redo_song(self) -> Song:
         """Redo song"""
         source = await YTDLSource.create_source(self.ctx, self.current.source.url)
         try:

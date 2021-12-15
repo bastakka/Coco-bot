@@ -9,6 +9,12 @@ from discord.ext import commands
 from .voicestate import VoiceState
 from .ytdlsource import YTDLError
 
+async def _is_playing(ctx: commands.Context) -> bool:
+    """Check if the bot is playing"""
+    if ctx.voice_state.is_playing():
+        return True
+    await ctx.send("Nothing is playing.")
+    return False
 
 class Music(BaseCog):
     """Music bot commands cog"""
@@ -71,51 +77,44 @@ class Music(BaseCog):
                 song = await ctx.voice_state.add_song(query)
             except YTDLError as err:
                 return await ctx.send(f"An error occurred while processing this request: {str(err)}")
-            await ctx.send("Enqued:", embed = song.make_song_embed)
+            await ctx.send("Enqued:", embed = song.make_song_embed())
 
     @commands.command(name="stop")
     async def stop(self, ctx: commands.Context) -> None:
         """Stop playing and clear the queue"""
-        if ctx.voice_state.is_playing():
+        if await _is_playing(ctx):
             await ctx.voice_state.stop()
             return await ctx.message.add_reaction("⏹")
-        return ctx.send("I am not playing anything.")
 
     @commands.command(name="pause")
     async def pause(self, ctx: commands.Context) -> None:
         """Pause the currently playing song"""
-        if ctx.voice_state.is_playing():
+        if await _is_playing(ctx):
             if ctx.voice_state.is_paused():
                 return await ctx.send("Already paused.")
             ctx.voice_state.pause()
-            return await ctx.message.add_reaction("⏸")
-        return ctx.send("I am not playing anything.")
+            await ctx.message.add_reaction("⏸")
 
     @commands.command(name="resume")
     async def resume(self, ctx: commands.Context) -> None:
         """Resume the currently paused song"""
-        if ctx.voice_state.is_playing():
+        if await _is_playing(ctx):
             if not ctx.voice_state.is_paused():
                 return await ctx.send("Not paused.")
             ctx.voice_state.resume()
-            return await ctx.message.add_reaction("▶️")
-        return ctx.send("I am not playing anything.")
+            await ctx.message.add_reaction("▶️")
 
     @commands.command(name="now", aliases=["current", "playing"])
     async def now(self, ctx: commands.Context) -> None:
-        if not ctx.voice_state.voice:
-            return await ctx.send("Not connected to any voice channel.")
-        if not ctx.voice_state.is_playing():
-            return await ctx.send("Not playing any music right now...")
-        await ctx.send(embed=ctx.voice_state.current.make_song_embed())
+        if await _is_playing(ctx):
+            await ctx.send(embed=ctx.voice_state.current.make_song_embed())
 
     @commands.command(name="skip")
     async def skip(self, ctx: commands.Context) -> None:
         """Skip the currently playing song"""
-        if not ctx.voice_state.is_playing():
-            return await ctx.send("Not playing any music right now...")
-        ctx.voice_state.skip()
-        await ctx.message.add_reaction("⏭")
+        if await _is_playing(ctx):
+            ctx.voice_state.skip()
+            await ctx.message.add_reaction("⏭")
 
     @commands.command(name="queue", aliases=["q"])
     async def queue(self, ctx: commands.Context, *, page: int = 1) -> None:
@@ -124,11 +123,14 @@ class Music(BaseCog):
             return await ctx.send("Empty queue")
         items_per_page = 10
         pages = math.ceil(len(ctx.voice_state.songs) / items_per_page)
+
         start = (page - 1) * items_per_page
         end = start + items_per_page
+        
         queue = ""
-        for i, song in enumerate(ctx.voice_state.songs):
+        for i, song in enumerate(ctx.voice_state.songs[start:end], start=start):
             queue += f"`{i + 1}.` [**{song.title}**]({song.url})\n"
+        
         embed = discord.Embed(description=queue, color=0x00FF00)
         embed.set_footer(text=f"Viewing page {page}/{pages}")
         await ctx.send(embed=embed)
@@ -140,28 +142,26 @@ class Music(BaseCog):
             ctx.voice_state.songs.remove(index - 1)
             await ctx.message.add_reaction("✅")
         except IndexError:
-            return await ctx.send("Invalid index.")
+            return await ctx.send("Invalid position.")
 
     @commands.command(name="volume", aliases=["vol"])
     async def volume(self, ctx: commands.Context, volume: Optional[int] = None) -> None:
         """Change the player's volume"""
-        if ctx.voice_state.is_playing():
+        if await _is_playing(ctx):
             if volume is None:
                 return await ctx.send(f"Volume is {ctx.voice_state.volume*100}%")
             if 0 <= volume <= 200:
                 ctx.voice_state.volume = volume/100
-                emoji = "🔇" if volume == 0 else "🔈"
                 return await ctx.send(f"Volume is {ctx.voice_state.volume*100}%")
-            return await ctx.send("Volume must be between 0 and 200 %")
-        return await ctx.send("Nothing playing.")
+            await ctx.send("Volume must be between 0 and 200 %")
 
     @commands.command(name="loop")
     async def loop(self, ctx: commands.Context) -> None:
         """Loop the currently playing song"""
-        if not ctx.voice_state.is_playing():
-            return await ctx.send("Not playing any music right now...")
-        ctx.voice_state.loop = not ctx.voice_state.loop
-        await ctx.message.add_reaction("🔁")
+        if await _is_playing(ctx):
+            ctx.voice_state.loop = not ctx.voice_state.loop
+            negative = "not " if ctx.voice_state.loop else ""
+            await ctx.send(f"Song will now {negative}loop.")
 
     @commands.command(name="shuffle")
     async def shuffle(self, ctx: commands.Context) -> None:
