@@ -1,12 +1,14 @@
 """Music bot commands cog module"""
 import math
 from typing import Optional
-from asyncprawcore import exceptions
+
 import discord
-from discord.ext import commands
 from core.basecog import BaseCog
-from extensions.music.ytdlsource import YTDLError
+from discord.ext import commands
+
 from .voicestate import VoiceState
+from .ytdlsource import YTDLError
+
 
 class Music(BaseCog):
     """Music bot commands cog"""
@@ -69,7 +71,7 @@ class Music(BaseCog):
                 song = await ctx.voice_state.add_song(query)
             except YTDLError as err:
                 return await ctx.send(f"An error occurred while processing this request: {str(err)}")
-            await ctx.send(f"Enqueued {song.title}")
+            await ctx.send("Enqued:", embed = song.make_song_embed)
 
     @commands.command(name="stop")
     async def stop(self, ctx: commands.Context) -> None:
@@ -145,12 +147,12 @@ class Music(BaseCog):
         """Change the player's volume"""
         if ctx.voice_state.is_playing():
             if volume is None:
-                return await ctx.send(f"Volume is {ctx.voice_state.volume}%")
+                return await ctx.send(f"Volume is {ctx.voice_state.volume*100}%")
             if 0 <= volume <= 200:
                 ctx.voice_state.volume = volume/100
                 emoji = "🔇" if volume == 0 else "🔈"
-                return await ctx.message.add_reaction(emoji)
-            return await ctx.send("Volume must be between 0 and 200.")
+                return await ctx.send(f"Volume is {ctx.voice_state.volume*100}%")
+            return await ctx.send("Volume must be between 0 and 200 %")
         return await ctx.send("Nothing playing.")
 
     @commands.command(name="loop")
