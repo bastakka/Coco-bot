@@ -3,12 +3,15 @@ import discord
 from discord.ext import commands
 from core.basecog import BaseCog
 
+
 class ExtensionManager(BaseCog):
     """Extension manager cog class"""
 
     def _make_extensions_embed(self):
         """Creates an embed for the extensions list"""
-        enabled = ", ".join(extension.split(".")[1] for extension in self.bot.extensions)
+        enabled = ", ".join(
+            extension.split(".")[1] for extension in self.bot.extensions
+        )
         disabled = ", ".join(extension for extension in self.config.extensions_disabled)
         embed = discord.Embed(title="Extensions", color=0x000000)
         embed.add_field(name="Enabled", value=enabled, inline=False)

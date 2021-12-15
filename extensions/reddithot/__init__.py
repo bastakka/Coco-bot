@@ -1,6 +1,7 @@
 """Reddit bot import module"""
 from .reddithot import RedditHot
 
+
 def setup(bot) -> None:
     """Setup function used by discord.py extension loader.
 

@@ -1,8 +1,10 @@
+"""Module with SongQueue class for voice state class"""
 import asyncio
 import itertools
 import random
 from typing import Union
 from .song import Song
+
 
 class SongQueue(asyncio.Queue):
     """Class for SongQueue"""

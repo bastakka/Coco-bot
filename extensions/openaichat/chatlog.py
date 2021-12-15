@@ -2,6 +2,7 @@
 from collections import deque
 import random
 
+
 class ChatLog:
     """Chat log between aurhor and bot class."""
 

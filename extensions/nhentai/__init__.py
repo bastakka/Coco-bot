@@ -1,6 +1,7 @@
 """nhentai bot import module"""
 from .nhentai import Nhentai
 
+
 def setup(bot) -> None:
     """Setup function used by discord.py extension loader.
 

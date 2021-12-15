@@ -38,7 +38,12 @@ class OpenAI(BaseCog):
         response = openai.Completion.create(
             prompt=prompt,
             engine="davinci",
-            stop=[f"\n{author.name}", f"\n{botname}", f" {author.name}:", f" {botname}:"],
+            stop=[
+                f"\n{author.name}",
+                f"\n{botname}",
+                f" {author.name}:",
+                f" {botname}:",
+            ],
             temperature=0.8,
             top_p=1,
             frequency_penalty=0.7,

@@ -1,6 +1,7 @@
 """Guildbase bot import module"""
 from .guildbase import GuildBase
 
+
 def setup(bot) -> None:
     """Setup function used by discord.py extension loader.
 

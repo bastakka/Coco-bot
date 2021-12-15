@@ -1,7 +1,7 @@
 """Module with Song class for voice state class"""
 import discord
-from discord.ext import commands
 from .ytdlsource import YTDLSource
+
 
 class Song:
     """Class for Song objects"""
@@ -25,7 +25,5 @@ class Song:
             value=f"[{self.source.uploader}]({self.source.uploader_url})",
         )
         embed.add_field(name="Upload date", value=f"{self.source.upload_date}")
-        embed.set_footer(
-            text=f"Requested by {self.requester.display_name}"
-        )
+        embed.set_footer(text=f"Requested by {self.requester.display_name}")
         return embed

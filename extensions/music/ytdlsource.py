@@ -72,8 +72,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         return f"**{self.title}** by **{self.uploader}**"
 
     @classmethod
-    async def create_source(
-        cls, ctx: commands.Context, search: str) -> "YTDLSource":
+    async def create_source(cls, ctx: commands.Context, search: str) -> "YTDLSource":
         """Creates a YTDL Source"""
         loop = asyncio.get_event_loop()
 

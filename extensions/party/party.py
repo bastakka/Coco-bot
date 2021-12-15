@@ -3,6 +3,7 @@ from discord.ext import commands
 from discord_together import DiscordTogether
 from core.basecog import BaseCog
 
+
 class Party(BaseCog):
     """Bot discord_together commands"""
 
@@ -36,4 +37,6 @@ class Party(BaseCog):
             await ctx.send(f"Click the blue link!\n{link}")
             await together_control.close()
         else:
-            await ctx.send("Invalid activity\nAvailable activities: " + ", ".join(activities))
+            await ctx.send(
+                "Invalid activity\nAvailable activities: " + ", ".join(activities)
+            )

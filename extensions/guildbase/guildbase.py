@@ -2,6 +2,7 @@
 from discord.ext import commands
 from core.basecog import BaseCog
 
+
 class GuildBase(BaseCog):
     """Bot base commands and listeners class"""
 

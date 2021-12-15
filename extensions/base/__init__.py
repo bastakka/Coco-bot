@@ -1,6 +1,7 @@
 """Base bot import module"""
 from .base import Base
 
+
 def setup(bot) -> None:
     """Setup function used by discord.py extension loader.
 

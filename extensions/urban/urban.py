@@ -41,7 +41,7 @@ def _parse_postition(word: str) -> tuple:
         position_number = position[1:]
         if position_number.isdigit():
             word = word.replace(position, "")
-            return word, int(position_number)-1
+            return word, int(position_number) - 1
         return word, -1
     return word, 0
 
@@ -93,4 +93,4 @@ class Urban(BaseCog):
             filename="logo-urban-dictionary.png",
         )
         embed = _make_urbandict_embed(Definition(definition))
-        await ctx.send(file = img_author, embed = embed)
+        await ctx.send(file=img_author, embed=embed)

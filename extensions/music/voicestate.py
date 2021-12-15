@@ -10,8 +10,10 @@ from .song import Song
 from .songqueue import SongQueue
 from .ytdlsource import YTDLSource
 
+
 class VoiceError(Exception):
     """Exception for voice related errors"""
+
 
 class VoiceState:
     """Bot voice state for each guild"""
@@ -44,18 +46,18 @@ class VoiceState:
 
     def __del__(self) -> None:
         self.audio_player.cancel()
-    
+
     def is_playing(self) -> bool:
         """Check if player is playing"""
         try:
             return self.voice.is_playing()
         except Exception:
             return False
-    
+
     def is_paused(self) -> bool:
         """Check if player is paused"""
         return self.voice.is_paused()
-    
+
     def skip(self) -> None:
         """Skip song"""
         if self.voice:
@@ -64,7 +66,7 @@ class VoiceState:
     def shuffle(self) -> None:
         """Shuffle queue"""
         self.songs.shuffle()
-    
+
     def pause(self) -> None:
         """Pause voice"""
         self.voice.pause()
@@ -80,21 +82,21 @@ class VoiceState:
     async def move_to(self, destination: discord.VoiceChannel) -> None:
         """Move to voice channel"""
         await self.voice.move_to(destination)
-    
+
     async def stop(self) -> None:
         """Stop voice"""
         self.songs.clear()
         if self.voice:
             await self.voice.disconnect()
             self.voice = None
-        
+
     async def add_song(self, query: str) -> Song:
         """Add song to queue"""
         try:
             source = await YTDLSource.create_source(self.ctx, query)
             song = Song(source)
         except YTDLError as err:
-            raise VoiceError(str(err))
+            raise VoiceError(str(err)) from err
         await self.songs.put(song)
         return song
 
@@ -104,7 +106,7 @@ class VoiceState:
         try:
             song = Song(source)
         except YTDLError as err:
-            raise VoiceError(str(err))
+            raise VoiceError(str(err)) from err
         return song
 
     async def audio_player_task(self) -> None:
@@ -122,12 +124,13 @@ class VoiceState:
                 except asyncio.TimeoutError:
                     self.bot.loop.create_task(self.stop())
                     return
-            
+
             self.current.source.volume = self._volume
             self.voice.play(self.current.source, after=self.play_next_song)
-            await self.current.source.channel.send("Now playing:", embed=self.current.make_song_embed())
+            await self.current.source.channel.send(
+                "Now playing:", embed=self.current.make_song_embed()
+            )
             await self.next.wait()
-
 
     def play_next_song(self, error: Exception = None) -> None:
         """Play next song"""

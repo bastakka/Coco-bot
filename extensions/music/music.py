@@ -3,11 +3,12 @@ import math
 from typing import Optional
 
 import discord
-from core.basecog import BaseCog
 from discord.ext import commands
+from core.basecog import BaseCog
 
 from .voicestate import VoiceState
 from .ytdlsource import YTDLError
+
 
 async def _is_playing(ctx: commands.Context) -> bool:
     """Check if the bot is playing"""
@@ -15,6 +16,7 @@ async def _is_playing(ctx: commands.Context) -> bool:
         return True
     await ctx.send("Nothing is playing.")
     return False
+
 
 class Music(BaseCog):
     """Music bot commands cog"""
@@ -76,8 +78,10 @@ class Music(BaseCog):
             try:
                 song = await ctx.voice_state.add_song(query)
             except YTDLError as err:
-                return await ctx.send(f"An error occurred while processing this request: {str(err)}")
-            await ctx.send("Enqued:", embed = song.make_song_embed())
+                return await ctx.send(
+                    f"An error occurred while processing this request: {str(err)}"
+                )
+            await ctx.send("Enqued:", embed=song.make_song_embed())
 
     @commands.command(name="stop")
     async def stop(self, ctx: commands.Context) -> None:
@@ -106,6 +110,7 @@ class Music(BaseCog):
 
     @commands.command(name="now", aliases=["current", "playing"])
     async def now(self, ctx: commands.Context) -> None:
+        """Display the currently playing song"""
         if await _is_playing(ctx):
             await ctx.send(embed=ctx.voice_state.current.make_song_embed())
 
@@ -126,11 +131,11 @@ class Music(BaseCog):
 
         start = (page - 1) * items_per_page
         end = start + items_per_page
-        
+
         queue = ""
         for i, song in enumerate(ctx.voice_state.songs[start:end], start=start):
             queue += f"`{i + 1}.` [**{song.title}**]({song.url})\n"
-        
+
         embed = discord.Embed(description=queue, color=0x00FF00)
         embed.set_footer(text=f"Viewing page {page}/{pages}")
         await ctx.send(embed=embed)
@@ -151,7 +156,7 @@ class Music(BaseCog):
             if volume is None:
                 return await ctx.send(f"Volume is {ctx.voice_state.volume*100}%")
             if 0 <= volume <= 200:
-                ctx.voice_state.volume = volume/100
+                ctx.voice_state.volume = volume / 100
                 return await ctx.send(f"Volume is {ctx.voice_state.volume*100}%")
             await ctx.send("Volume must be between 0 and 200 %")
 

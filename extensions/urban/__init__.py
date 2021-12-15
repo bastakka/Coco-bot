@@ -1,6 +1,7 @@
 """Urban bot import module"""
 from .urban import Urban
 
+
 def setup(bot) -> None:
     """Setup function used by discord.py extension loader.
 

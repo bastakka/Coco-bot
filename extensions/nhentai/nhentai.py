@@ -18,7 +18,7 @@ def make_doujin_embed(doujin: Doujin) -> discord.Embed:
     embed.set_author(
         name="nhentai",
         url="https://nhentai.net",
-        icon_url="attachment://logo-nhentai.png"
+        icon_url="attachment://logo-nhentai.png",
     )
     embed.set_footer(text=f"Uploaded on {doujin.date}")
     return embed
@@ -32,7 +32,7 @@ class Nhentai(BaseCog):
         if ctx.guild is None:
             return True
         return ctx.channel.is_nsfw()
-    
+
     @commands.Cog.listener()
     async def on_command_error(self, ctx: commands.Context, error):
         """Handle command errors"""
@@ -54,7 +54,7 @@ class Nhentai(BaseCog):
                 "assets/images/logos/logo-nhentai.png",
                 filename="logo-nhentai.png",
             )
-            await ctx.send(file = img_author, embed = embed)
+            await ctx.send(file=img_author, embed=embed)
         else:
             await ctx.send("You got the wrong numbers buddy")
 
