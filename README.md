@@ -23,7 +23,7 @@ pip install -r requirements.txt
 python3 bot.py
 ```
 or
-- Run bot as a systemd service (configurated to /srv/Coco-bot path)
+- Run bot as a systemd service (configurated to /srv/Coco-bot path with venv called venv)
 ```
 sudo cp resources/coco.service /etc/systemd/system/
 sudo systemctl enable coco
