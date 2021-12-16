@@ -42,12 +42,9 @@ class RedditHot(BaseCog):
 
     def __init__(self, bot):
         super().__init__(bot)
-        self.subreddit_json_path = (
-            os.path.dirname(os.path.abspath(__file__)) + "/subreddits.json"
-        )
-        self.repost_json_path = (
-            os.path.dirname(os.path.abspath(__file__)) + "/reposts.json"
-        )
+        self.dir_path = os.path.dirname(os.path.realpath(__file__))
+        self.subreddit_json_path = self.dir_path + "/subreddits.json"
+        self.repost_json_path = self.dir_path + "/reposts.json"
         self.subreddits = self._get_subreddits()
         self.reposts = self._get_reposts()
         self.reddit = Reddit(

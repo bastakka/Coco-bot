@@ -64,7 +64,6 @@ async def on_ready() -> None:
 
 
 if config.debug is False:
-
     @coco.event
     async def on_command_error(ctx: commands.Context, error) -> None:
         """Error handler which informs an user in a funny way."""
@@ -107,7 +106,6 @@ if config.debug is False:
             args[0].author if args else "no one",
             kwargs,
         )
-
 
 print(f"{Fore.YELLOW}[*] Extensions loading...")
 for extension in config.extensions_enabled:
