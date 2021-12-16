@@ -214,7 +214,7 @@ class Roles(BaseCog):
     @commands.guild_only()
     @commands.has_permissions(manage_roles=True)
     @commands.command()
-    async def message_remove(self, ctx, message: str, *, text: str):
+    async def message_edit(self, ctx, message: str, *, text: str):
         """Edit message in reaction_messages"""
         if message not in self.reaction_messages:
             return await ctx.send("Message not found")
