@@ -23,9 +23,7 @@ async def _make_reddit_embed(submission):
         icon_url=submission.subreddit.icon_img,
     )
     if not submission.is_self:
-        if submission.url.startswith("https://i.redd.it") or submission.url.startswith(
-            "https://i.imgur.com"
-        ):
+        if submission.url.startswith("https://i"):
             embed.set_image(url=submission.url)
         else:
             embed.add_field(
