@@ -133,8 +133,7 @@ class RedditHot(BaseCog):
                             del self.subreddits[subreddit][channel_id]
                             continue
                         await channel.send(embed=embed)
-
-        self._save_reposts()
+            self._save_reposts()
         self.logger.info("Reddit loop finished")
 
     @commands.has_permissions(administrator=True)
