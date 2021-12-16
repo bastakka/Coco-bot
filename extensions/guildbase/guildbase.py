@@ -4,7 +4,7 @@ from core.basecog import BaseCog
 
 
 class GuildBase(BaseCog):
-    """Bot base commands and listeners class"""
+    """Bot base commands class"""
 
     @commands.cooldown(rate=1, per=20.0, type=commands.BucketType.channel)
     @commands.is_owner()
