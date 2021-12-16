@@ -8,17 +8,22 @@ from discord.ext import commands, tasks
 from discord import RawReactionActionEvent
 from core.basecog import BaseCog
 
+
 class MessageNotFound(Exception):
     """Raised when a message is not found"""
+
 
 class ChannelNotFound(Exception):
     """Raised when a channel is not found"""
 
+
 class EmojiAlreadyExists(Exception):
     """Raised when an emoji already exists"""
 
+
 class EmojiNotInMessage(Exception):
     """Raised when an emoji is not in a reaction message"""
+
 
 class Roles(BaseCog):
     """Bot Roles commands and listeners class"""
@@ -53,6 +58,27 @@ class Roles(BaseCog):
             raise ChannelNotFound
         return channel
 
+    async def _get_guild_by_id(self, guild_id: int) -> discord.Guild:
+        """Get guild by id"""
+        guild = self.bot.get_guild(guild_id)
+        if guild is None:
+            raise discord.NotFound
+        return guild
+
+    async def _get_role_by_id(self, guild: discord.Guild, role_id: int) -> discord.Role:
+        """Get role from guild by id"""
+        role = guild.get_role(role_id)
+        if role is None:
+            raise discord.NotFound
+        return role
+
+    async def _get_user_by_id(self, guild: discord.Guild, user_id: int) -> discord.User:
+        """Get user from guild by id"""
+        user = guild.get_member(user_id)
+        if user is None:
+            raise discord.NotFound
+        return user
+
     async def _procces_reaction(self, payload: RawReactionActionEvent, type: str):
         """Procces reaction"""
         payload_id = str(payload.message_id)
@@ -64,20 +90,10 @@ class Roles(BaseCog):
             emojies = self.reaction_messages[payload_id]["emojies"]
             if emoji in emojies:
 
-                guild = self.bot.get_guild(payload.guild_id)
-                if guild is None:
-                    self.logger.warning("Error in fetching guild in procces_reaction")
-                    return
+                guild = self._get_guild_by_id(payload.guild_id)
+                role = self._get_role_by_id(guild, emojies[emoji])
+                user = self._get_user_by_id(guild, payload.user_id)
 
-                role = guild.get_role(emojies[emoji])
-                if role is None:
-                    self.logger.warning("Error in fetching role in procces_reaction")
-                    return
-
-                user = await guild.fetch_member(payload.user_id)
-                if user is None:
-                    self.logger.warning("Error in fetching user in procces_reaction")
-                    return
                 try:
                     if type == "add":
                         return await user.add_roles(role)
@@ -122,7 +138,7 @@ class Roles(BaseCog):
     async def on_ready(self):
         """Bot ready event"""
         self.check_messages.start()  # pylint: disable=no-member
-    
+
     async def cog_command_error(
         self, ctx: ApplicationContext, error: Exception
     ) -> None:
@@ -130,7 +146,7 @@ class Roles(BaseCog):
             await ctx.send("Could not find channel")
         elif isinstance(error, commands.CommandInvokeError):
             await ctx.send(f"Error. I still don't know how to describe which.")
-    
+
     @commands.guild_only()
     @commands.has_permissions(manage_roles=True)
     @commands.command()
@@ -140,7 +156,9 @@ class Roles(BaseCog):
             raise MessageNotFound
         if await self._emoji_in_message(message, emoji):
             raise EmojiAlreadyExists
-        channel = await self._get_channel_by_id(self.reaction_messages[message]["channel_id"])
+        channel = await self._get_channel_by_id(
+            self.reaction_messages[message]["channel_id"]
+        )
         fetched_message = await self._fetch_message(channel, int(message))
 
         await fetched_message.add_reaction(emoji)
@@ -157,7 +175,9 @@ class Roles(BaseCog):
             raise MessageNotFound
         if not await self._emoji_in_message(message, emoji):
             raise EmojiNotInMessage
-        channel = await self._get_channel_by_id(self.reaction_messages[message]["channel_id"])
+        channel = await self._get_channel_by_id(
+            self.reaction_messages[message]["channel_id"]
+        )
         fetched_message = await self._fetch_message(channel, int(message))
 
         await fetched_message.clear_reaction(emoji)
@@ -215,7 +235,9 @@ class Roles(BaseCog):
         """Remove message from reaction_messages"""
         if not await self._message_in_messages(message):
             raise MessageNotFound
-        channel = await self._get_channel_by_id(self.reaction_messages[message]["channel_id"])
+        channel = await self._get_channel_by_id(
+            self.reaction_messages[message]["channel_id"]
+        )
         fetched_message = await self._fetch_message(channel, int(message))
 
         await fetched_message.delete()
@@ -230,7 +252,9 @@ class Roles(BaseCog):
         """Edit message in reaction_messages"""
         if not await self._message_in_messages(message):
             raise MessageNotFound
-        channel = await self._get_channel_by_id(self.reaction_messages[message]["channel_id"])
+        channel = await self._get_channel_by_id(
+            self.reaction_messages[message]["channel_id"]
+        )
         fetched_message = await self._fetch_message(channel, int(message))
 
         title = text.split("\n")[0]
@@ -238,15 +262,19 @@ class Roles(BaseCog):
         embed = discord.Embed(title=title, description=description)
         await fetched_message.edit(embed=embed)
         await ctx.send("Edited message")
-    
+
     @tasks.loop(hours=24)
     async def check_messages(self):
         self.logger.info("Roles loop started")
         for message in self.reaction_messages.copy():
             try:
-                channel = await self._get_channel_by_id(self.reaction_messages[message]["channel_id"])
+                channel = await self._get_channel_by_id(
+                    self.reaction_messages[message]["channel_id"]
+                )
             except ChannelNotFound:
-                self.logger.warning(f"Channel not found for message {message}, removing message.")
+                self.logger.warning(
+                    f"Channel not found for message {message}, removing message."
+                )
                 del self.reaction_messages[message]
                 continue
             try:
