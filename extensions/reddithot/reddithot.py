@@ -137,7 +137,7 @@ class RedditHot(BaseCog):
         self._save_reposts()
         self.logger.info("Reddit loop finished")
 
-    @commands.is_owner()
+    @commands.has_permissions(administrator=True)
     @commands.command()
     async def subreddit_here(self, ctx, subreddit):
         """Add channel to list of channels to receive hot post form subreddit"""
@@ -161,8 +161,8 @@ class RedditHot(BaseCog):
         return await ctx.send(
             f"{ctx.channel.mention} is already subscribed to {subreddit}"
         )
-
-    @commands.is_owner()
+    #If user is admin
+    @commands.has_permissions(administrator=True)
     @commands.command()
     async def subreddit_not_here(self, ctx, subreddit):
         """Remove channel from list of channels to receive hot posts form subreddit"""
