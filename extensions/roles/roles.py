@@ -218,7 +218,10 @@ class Roles(BaseCog):
             return await ctx.send("Message cannot be empty")
         title = text.split("\n")[0]
         description = "\n".join(text.split("\n")[1:])
-        embed = discord.Embed(title=title, description=description)
+        embed = discord.Embed(
+            title="" if title.strip() == "empty" else title,
+            description=description
+        )
         message = await channel.send(embed=embed)
 
         self.reaction_messages[str(message.id)] = {
