@@ -141,3 +141,6 @@ assets/images/memes/*
 # Reddit jsons
 extensions/reddithot/reposts.json
 extensions/reddithot/subreddits.json
+
+# Roles json
+extensions/roles/reaction_messages.json
