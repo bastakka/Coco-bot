@@ -40,7 +40,7 @@ async def _make_reddit_embed(submission):
 class RedditHot(BaseCog):
     """Bot Reddit commands and loop"""
 
-    def __init__(self, bot):
+    def __init__(self, bot) -> None:
         super().__init__(bot)
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
         self.subreddit_json_path = self.dir_path + "/subreddits.json"
@@ -56,7 +56,7 @@ class RedditHot(BaseCog):
         )
         self.reddit.read_only = True
 
-    def _get_subreddits(self):
+    def _get_subreddits(self) -> dict:
         """Get subreddits from subreddits local json file"""
         try:
             with open(
@@ -74,7 +74,7 @@ class RedditHot(BaseCog):
                 json.dump(subreddits, subreddits_file, indent=4)
         return subreddits
 
-    def _get_reposts(self):
+    def _get_reposts(self) -> dict:
         """Get repost from repost local json file"""
         try:
             with open(self.repost_json_path, "r", encoding="utf-8") as reposts_file:
@@ -86,17 +86,17 @@ class RedditHot(BaseCog):
                 json.dump(reposts, reposts_file, indent=4)
         return reposts
 
-    def _save_subreddits(self):
+    def _save_subreddits(self) -> None:
         """Save subreddits to local json file"""
         with open(self.subreddit_json_path, "w", encoding="utf-8") as subreddits_file:
             json.dump(self.subreddits, subreddits_file, indent=4)
 
-    def _save_reposts(self):
+    def _save_reposts(self) -> None:
         """Save repost to repost local json file"""
         with open(self.repost_json_path, "w", encoding="utf-8") as reposts_file:
             json.dump(self.reposts, reposts_file, indent=4)
 
-    def _increment_reposts(self):
+    def _increment_reposts(self) -> None:
         """Increment reposts for subreddit"""
         for repost in self.reposts.copy():
             self.reposts[repost] += 1
@@ -105,12 +105,12 @@ class RedditHot(BaseCog):
                 del self.reposts[repost]
 
     @commands.Cog.listener()
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         """Bot ready event"""
         self.reddit_loop.start()  # pylint: disable=no-member
 
     @tasks.loop(hours=1)
-    async def reddit_loop(self):
+    async def reddit_loop(self) -> None:
         """Reddit loop"""
         self.logger.info("Reddit loop started")
         self._increment_reposts()
@@ -138,7 +138,7 @@ class RedditHot(BaseCog):
 
     @commands.has_permissions(administrator=True)
     @commands.command()
-    async def subreddit_here(self, ctx, subreddit):
+    async def subreddit_here(self, ctx, subreddit) -> None:
         """Add channel to list of channels to receive hot post form subreddit"""
         try:
             praw_subreddit = await self.reddit.subreddit(subreddit, fetch=True)
@@ -163,7 +163,7 @@ class RedditHot(BaseCog):
     #If user is admin
     @commands.has_permissions(administrator=True)
     @commands.command()
-    async def subreddit_not_here(self, ctx, subreddit):
+    async def subreddit_not_here(self, ctx, subreddit) -> None:
         """Remove channel from list of channels to receive hot posts form subreddit"""
         try:
             praw_subreddit = await self.reddit.subreddit(subreddit, fetch=True)
