@@ -8,7 +8,7 @@ from asyncprawcore.exceptions import Redirect
 from core.basecog import BaseCog
 
 
-async def _make_reddit_embed(submission):
+async def _make_reddit_embed(submission) -> discord.Embed:
     """Creates an embed from a reddit submission."""
     await submission.subreddit.load()
     await submission.author.load()
@@ -40,7 +40,7 @@ async def _make_reddit_embed(submission):
 class RedditHot(BaseCog):
     """Bot Reddit commands and loop"""
 
-    def __init__(self, bot) -> None:
+    def __init__(self, bot: commands.Bot) -> None:
         super().__init__(bot)
         self.dir_path = os.path.dirname(os.path.realpath(__file__))
         self.subreddit_json_path = self.dir_path + "/subreddits.json"
@@ -138,7 +138,7 @@ class RedditHot(BaseCog):
 
     @commands.has_permissions(administrator=True)
     @commands.command()
-    async def subreddit_here(self, ctx, subreddit) -> None:
+    async def subreddit_here(self, ctx: commands.Context, subreddit: str) -> None:
         """Add channel to list of channels to receive hot post form subreddit"""
         try:
             praw_subreddit = await self.reddit.subreddit(subreddit, fetch=True)
@@ -163,7 +163,7 @@ class RedditHot(BaseCog):
     #If user is admin
     @commands.has_permissions(administrator=True)
     @commands.command()
-    async def subreddit_not_here(self, ctx, subreddit) -> None:
+    async def subreddit_not_here(self, ctx: commands.Context, subreddit: str) -> None:
         """Remove channel from list of channels to receive hot posts form subreddit"""
         try:
             praw_subreddit = await self.reddit.subreddit(subreddit, fetch=True)
