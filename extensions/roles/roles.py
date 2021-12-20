@@ -90,9 +90,9 @@ class Roles(BaseCog):
             emojies = self.reaction_messages[payload_id]["emojies"]
             if emoji in emojies:
 
-                guild = self._get_guild_by_id(payload.guild_id)
-                role = self._get_role_by_id(guild, emojies[emoji])
-                user = self._get_user_by_id(guild, payload.user_id)
+                guild = await self._get_guild_by_id(payload.guild_id)
+                role = await self._get_role_by_id(guild, emojies[emoji])
+                user = await self._get_user_by_id(guild, payload.user_id)
 
                 try:
                     if type == "add":
