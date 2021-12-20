@@ -221,7 +221,7 @@ class Roles(BaseCog):
         embed = discord.Embed(
             title="" if title.strip() == "empty" else title,
             description=description,
-            color=int(self.config.color)
+            color=0xffff00
         )
         message = await channel.send(embed=embed)
 
@@ -266,7 +266,7 @@ class Roles(BaseCog):
         embed = discord.Embed(
             title="" if title.strip() == "empty" else title,
             description=description,
-            color=int(self.config.color)
+            color=0xffff00
         )
         await fetched_message.edit(embed=embed)
         await ctx.send("Edited message")
