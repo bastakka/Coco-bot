@@ -13,7 +13,7 @@ async def _make_reddit_embed(submission) -> discord.Embed:
     await submission.subreddit.load()
     await submission.author.load()
     embed = discord.Embed(
-        title=submission.title,
+        title=submission.title if len(submission.title) < 250 else submission.title[:245] + "...",
         url="https://reddit.com" + submission.permalink,
         description=submission.selftext,
         color=0xFF0000,
