@@ -23,7 +23,7 @@ async def _make_reddit_embed(submission) -> discord.Embed:
         icon_url=submission.subreddit.icon_img,
     )
     if not submission.is_self:
-        if submission.url.startswith("https://i"):
+        if submission.url.endswith(('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif')):
             embed.set_image(url=submission.url)
         else:
             embed.add_field(
@@ -132,7 +132,10 @@ class RedditHot(BaseCog):
                             )
                             del self.subreddits[subreddit][channel_id]
                             continue
-                        await channel.send(embed=embed)
+                        if submission.url.startswith("https://v.redd.it/"):
+                            await channel.send("https://reddit.com" + submission.permalink)
+                        else:
+                            await channel.send(embed=embed)
             self._save_reposts()
         self.logger.info("Reddit loop finished")
 
