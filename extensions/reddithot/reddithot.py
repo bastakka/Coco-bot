@@ -119,9 +119,9 @@ class RedditHot(BaseCog):
             self.logger.debug("Fetching %s...", subreddit)
             praw_subreddit = await self.reddit.subreddit(subreddit, fetch=True)
             async for submission in praw_subreddit.hot(limit=6):
-                if f"{submission.subreddit.id}-{submission.id}" not in self.reposts:
+                if f"{praw_subreddit.id}-{submission.id}" not in self.reposts:
                     self.logger.debug("Found new submission: %s", submission.id)
-                    self.reposts[f"{submission.subreddit.id}-{submission.id}"] = 0
+                    self.reposts[f"{praw_subreddit.id}-{submission.id}"] = 0
                     embed = await _make_reddit_embed(submission)
                     for channel_id in self.subreddits.copy()[subreddit]:
                         try:
