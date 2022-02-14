@@ -97,6 +97,11 @@ class VoiceState:
             song = Song(source)
         except YTDLError as err:
             raise VoiceError(str(err)) from err
+        try:
+            if self.audio_player.done():
+                self.audio_player = self.bot.loop.create_task(self.audio_player_task())
+        except Exception as err:
+            raise VoiceError(str(err)) from err
         await self.songs.put(song)
         return song
 
@@ -122,7 +127,7 @@ class VoiceState:
                     async with timeout(180):
                         self.current = await self.songs.get()
                 except asyncio.TimeoutError:
-                    self.stop()
+                    await self.stop()
                     return
 
             self.current.source.volume = self._volume
