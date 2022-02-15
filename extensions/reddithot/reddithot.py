@@ -1,4 +1,4 @@
-"""Reddit bot commands cog module"""
+"""Reddit bot loop and commands cog module"""
 import json
 import os
 import discord
