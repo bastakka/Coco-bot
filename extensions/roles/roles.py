@@ -3,7 +3,6 @@ import os
 import json
 from typing import Optional
 import discord
-from discord.commands.context import ApplicationContext
 from discord.ext import commands, tasks
 from discord import RawReactionActionEvent
 from core.basecog import BaseCog
@@ -140,7 +139,7 @@ class Roles(BaseCog):
         self.check_messages.start()  # pylint: disable=no-member
 
     async def cog_command_error(
-        self, ctx: ApplicationContext, error: Exception
+        self, ctx, error: Exception
     ) -> None:
         if isinstance(error, commands.ChannelNotFound):
             await ctx.send("Could not find channel")
