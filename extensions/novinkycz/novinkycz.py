@@ -135,7 +135,7 @@ class Novinkycz(BaseCog):
         self.logger.debug("News fetched.")
         for new in news:
             if news[new].loc not in self.news_reposts:
-                self.logger.debug("Found new news: %s", new.title)
+                self.logger.debug("Found new news: %s", news[new].title)
                 self.news_reposts[news[new].loc] = 0
                 embed = await _make_new_embed(news[new])
                 img_author = discord.File(
