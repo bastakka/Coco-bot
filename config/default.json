@@ -12,7 +12,7 @@
   },
 
   "extensions": {
-    "enabled": ["base", "guildbase", "roles", "music", "party", "nhentai", "urban"],
+    "enabled": ["base", "guildbase", "roles", "music", "party", "nhentai", "urban", "novinkycz"],
     "disabled": ["reddit", "openaichat"]
   },
   "reddit": {

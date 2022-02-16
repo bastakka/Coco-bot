@@ -144,3 +144,7 @@ extensions/reddithot/subreddits.json
 
 # Roles json
 extensions/roles/reaction_messages.json
+
+# Novinky json
+extensions/novinkycz/news_reposts.json
+extensions/novinkycz/news_channels.json
