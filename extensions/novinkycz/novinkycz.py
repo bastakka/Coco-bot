@@ -12,9 +12,9 @@ from .news import News
 
 async def _get_preview_image_url(url: str) -> str:
     """Get preview image url from news url"""
-    respone = requests.get(url)
-    if respone.status_code == 200:
-        soup = BeautifulSoup(respone.content, "html.parser")
+    response = requests.get(url)
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.content, "html.parser")
         preview_image_url = soup.find("meta", property="og:image")["content"]
         return preview_image_url
 
