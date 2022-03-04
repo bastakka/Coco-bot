@@ -145,11 +145,14 @@ class Novinkycz(BaseCog):
                 for channel_id in self.news_channels.copy():
                     try:
                         channel = self.bot.get_channel(channel_id)
+                        if not channel:
+                            self.news_channels.remove(channel_id)
+                            continue
                     except discord.NotFound:
                         self.logger.warning(
                             "Could not find channel %s. Deleting...", channel_id
                         )
-                        del self.news_channels[channel_id]
+                        self.news_channels.remove(channel_id)
                         continue
                     await channel.send(file=img_author, embed=embed)
         self._save_news_reposts()
