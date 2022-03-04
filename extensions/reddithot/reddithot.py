@@ -15,7 +15,7 @@ async def _make_reddit_embed(submission) -> discord.Embed:
     embed = discord.Embed(
         title=submission.title if len(submission.title) < 250 else submission.title[:245] + "...",
         url="https://reddit.com" + submission.permalink,
-        description=submission.selftext,
+        description=submission.selftext if len(submission.selftext) < 2048 else submission.selftext[:2043] + "...",
         color=0xFF0000,
     )
     embed.set_author(
