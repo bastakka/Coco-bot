@@ -117,25 +117,32 @@ class RedditHot(BaseCog):
 
         for subreddit in self.subreddits:
             self.logger.debug("Fetching %s...", subreddit)
-            praw_subreddit = await self.reddit.subreddit(subreddit, fetch=True)
+            try:
+                praw_subreddit = await self.reddit.subreddit(subreddit, fetch=True)
+            except:
+                self.logger.warning("Could not fetch %s, skipping...", subreddit)
+                continue
             async for submission in praw_subreddit.hot(limit=6):
-                if f"{praw_subreddit.id}-{submission.id}" not in self.reposts:
-                    self.logger.debug("Found new submission: %s", submission.id)
-                    self.reposts[f"{praw_subreddit.id}-{submission.id}"] = 0
-                    embed = await _make_reddit_embed(submission)
-                    for channel_id in self.subreddits.copy()[subreddit]:
-                        try:
-                            channel = self.bot.get_channel(channel_id)
-                        except discord.NotFound:
-                            self.logger.warning(
-                                "Could not find channel %s. Deleting...", channel_id
-                            )
-                            del self.subreddits[subreddit][channel_id]
-                            continue
-                        if submission.url.startswith("https://v.redd.it/"):
-                            await channel.send("https://reddit.com" + submission.permalink)
-                        else:
-                            await channel.send(embed=embed)
+                try:
+                    if f"{praw_subreddit.id}-{submission.id}" not in self.reposts:
+                        self.logger.debug("Found new submission: %s", submission.id)
+                        self.reposts[f"{praw_subreddit.id}-{submission.id}"] = 0
+                        embed = await _make_reddit_embed(submission)
+                        for channel_id in self.subreddits.copy()[subreddit]:
+                            try:
+                                channel = self.bot.get_channel(channel_id)
+                            except discord.NotFound:
+                                self.logger.warning(
+                                    "Could not find channel %s. Deleting...", channel_id
+                                )
+                                del self.subreddits[subreddit][channel_id]
+                                continue
+                            if submission.url.startswith("https://v.redd.it/"):
+                                await channel.send("https://reddit.com" + submission.permalink)
+                            else:
+                                await channel.send(embed=embed)
+                except:
+                    self.logger.exception("Error in submission %s, skipping...", submission.id)
             self._save_reposts()
         self.logger.info("Reddit loop finished")
 
