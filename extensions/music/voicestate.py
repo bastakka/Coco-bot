@@ -132,9 +132,10 @@ class VoiceState:
 
             self.current.source.volume = self._volume
             self.voice.play(self.current.source, after=self.play_next_song)
-            await self.current.source.channel.send(
-                "Now playing:", embed=self.current.make_song_embed()
-            )
+            if not self.loop:
+                await self.current.source.channel.send(
+                    "Now playing:", embed=self.current.make_song_embed()
+                )
             await self.next.wait()
 
     def play_next_song(self, error: Exception = None) -> None:
